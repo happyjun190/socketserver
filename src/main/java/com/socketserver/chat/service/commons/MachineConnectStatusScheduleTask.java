@@ -1,3 +1,4 @@
+/*
 package com.socketserver.chat.service.commons;
 
 import java.text.SimpleDateFormat;
@@ -72,3 +73,4 @@ public class MachineConnectStatusScheduleTask {
 	}
 	
 }
+*/
