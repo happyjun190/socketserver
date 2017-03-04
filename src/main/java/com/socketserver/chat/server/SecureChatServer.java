@@ -1,19 +1,16 @@
 package com.socketserver.chat.server;
 
+import com.socketserver.chat.server.cleaners.CleanUnactiveChannels;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
-
-import com.socketserver.chat.server.cleaners.CleanUnactiveChannels;
-//import com.socketserver.chat.service.ApnsPushService;
 
 @Component
 public class SecureChatServer {
@@ -34,7 +31,7 @@ public class SecureChatServer {
 		EventLoopGroup workerGroup = new NioEventLoopGroup();
 		try {
 			
-			new Thread(new CleanUnactiveChannels()).start(); 
+			new Thread(new CleanUnactiveChannels()).start();
 			
 			ServerBootstrap b = new ServerBootstrap();
 			b.group(bossGroup, workerGroup)
