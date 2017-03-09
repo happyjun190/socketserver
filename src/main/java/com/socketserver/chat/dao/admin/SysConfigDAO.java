@@ -8,7 +8,6 @@ import org.apache.ibatis.annotations.Select;
 import com.socketserver.chat.model.admin.SysConfig;
 import com.socketserver.chat.repositories.IndustrynetRepository;
 
-@IndustrynetRepository
 public interface SysConfigDAO {
 
 	@Select("select * from ts_sys_config where item=#{item}")

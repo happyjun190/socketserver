@@ -121,7 +121,7 @@ public class SocketUser implements Comparable<SocketUser>, Serializable {
 		deviceCustomId = ois.readUTF();
 	}
 	
-	static public void main(String[] args){
+	/*static public void main(String[] args){
 		System.out.println("ok");
 		Pattern pattern = Pattern.compile("i(\\d+)t(\\d+)dCI(\\S*)");
 		Matcher matcher = pattern.matcher("i10t3dCI111");
@@ -133,6 +133,6 @@ public class SocketUser implements Comparable<SocketUser>, Serializable {
 		
 		System.out.println(fromString("i10t3dCIbd0abd8274afaa1dfef5c6dda9e849c7f1fc0241"));
 	}
-
+*/
 	
 }

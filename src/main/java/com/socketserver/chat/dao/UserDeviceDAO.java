@@ -7,7 +7,6 @@ import org.apache.ibatis.annotations.Param;
 import com.socketserver.chat.model.userdevice.TabUserDevice;
 import com.socketserver.chat.repositories.IndustrynetRepository;
 
-@IndustrynetRepository
 public interface UserDeviceDAO {
 	
 	/**

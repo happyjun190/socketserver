@@ -10,7 +10,7 @@
 <!-- Begin: 设置公用的配置，简化后面的配置 -->
 	
 	<!-- 配置公用的有连接池数据源   ...生产环境 -->
-	<bean id="baseDataSource" abstract="true" class="com.jolbox.bonecp.BoneCPDataSource" destroy-method="close">
+	<!--<bean id="baseDataSource" abstract="true" class="com.jolbox.bonecp.BoneCPDataSource" destroy-method="close">
 		<property name="driverClass" value="${jdbc.driverClass}" />
 		<property name="username" value="${jdbc.username}" />
 		<property name="password" value="${jdbc.password}" />
@@ -23,13 +23,13 @@
 		<property name="statementsCacheSize" value="100" />
 		<property name="maxConnectionAgeInSeconds" value="20"/>
 	</bean>
-	
-	<!-- myBatis mapper文件位置 -->
+
+	&lt;!&ndash; myBatis mapper文件位置 &ndash;&gt;
 	<bean id="baseSqlSessionFactory" abstract="true" class="org.mybatis.spring.SqlSessionFactoryBean">
-		<!-- <property name="dataSource" ref="ds2" /> --> <!-- 各个数据源自己指定dataSource ref-->
+		&lt;!&ndash; <property name="dataSource" ref="ds2" /> &ndash;&gt; &lt;!&ndash; 各个数据源自己指定dataSource ref&ndash;&gt;
 		<property name="mapperLocations" value="classpath:com/socketserver/chat/mapper/*.xml" />
-	</bean>	
-	
+	</bean>
+
 	<bean id="ds1" parent="baseDataSource">
 		<property name="jdbcUrl" value="${jdbc.urlHead}${jdbc.db1}${jdbc.urlParams}" />
 	</bean>
@@ -41,19 +41,62 @@
 		<property name="annotationClass" value="com.socketserver.chat.repositories.IndustrynetRepository" />
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory1" />
 	</bean>
-	
-	<!-- 使用Spring Data的ChainedTransactionManager -->
+
+	&lt;!&ndash; 使用Spring Data的ChainedTransactionManager &ndash;&gt;
 	<bean id="transactionManager" class="org.springframework.data.transaction.ChainedTransactionManager" >
 		<constructor-arg>
             <list>
-				<!-- 仅消息库在事务管理中 -->
+				&lt;!&ndash; 仅消息库在事务管理中 &ndash;&gt;
 				<bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 					<property name="dataSource" ref="ds1" />
 				</bean>
             </list>
 		</constructor-arg>
 	</bean>
-	
-	<tx:annotation-driven transaction-manager="transactionManager" /> 
+
+	<tx:annotation-driven transaction-manager="transactionManager" /> -->
+
+
+	<!-- 数据库配置 -->
+	<bean id="dataSource_1" class="org.apache.commons.dbcp.BasicDataSource"
+		  destroy-method="close">
+		<property name="driverClassName" value="${dataSource_1.diverClassName}" />
+		<property name="url" value="${dataSource_1.url}" />
+		<property name="username" value="${dataSource_1.username}" />
+		<property name="password" value="${dataSource_1.password}" />
+		<property name="initialSize" value="${dataSource_1.initialSize}" />
+		<property name="maxActive" value="${dataSource_1.maxActive}" />
+		<property name="maxIdle" value="${dataSource_1.maxIdle}" />
+		<property name="minIdle" value="${dataSource_1.minIdle}" />
+		<property name="maxWait" value="${dataSource_1.maxWait}" />
+		<property name="testWhileIdle" value="${dataSource_1.testWhileIdle}" />
+		<property name="timeBetweenEvictionRunsMillis" value="${dataSource_1.timeBetweenEvictionRunsMillis}" />
+		<property name="numTestsPerEvictionRun" value="${dataSource_1.numTestsPerEvictionRun}" />
+		<property name="minEvictableIdleTimeMillis" value="${dataSource_1.minEvictableIdleTimeMillis}" />
+		<property name="poolPreparedStatements" value="${dataSource_1.poolPreparedStatements}" />
+		<property name="maxOpenPreparedStatements" value="${dataSource_1.maxOpenPreparedStatements}" />
+		<property name="defaultAutoCommit" value="${dataSource_1.defaultAutoCommit}" />
+		<property name="removeAbandoned" value="${dataSource_1.removeAbandoned}" />
+		<property name="removeAbandonedTimeout" value="${dataSource_1.removeAbandonedTimeout}" />
+		<property name="logAbandoned" value="${dataSource_1.logAbandoned}" />
+	</bean>
+
+	<!-- 扫描dao层的接口 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.socketserver.chat.dao.**" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+	</bean>
+
+	<!-- 扫描dao层的xml文件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource_1" />
+		<property name="mapperLocations" value="classpath:com/socketserver/chat/mapper/*.xml"></property>
+	</bean>
+
+	<!-- 事物管理 -->
+	<bean id="transactionManager"
+		  class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource_1" />
+	</bean>
 	
 </beans>
