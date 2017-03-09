@@ -124,7 +124,7 @@ public class SocketUser implements Comparable<SocketUser>, Serializable {
 	static public void main(String[] args){
 		System.out.println("ok");
 		Pattern pattern = Pattern.compile("i(\\d+)t(\\d+)dCI(\\S*)");
-		Matcher matcher = pattern.matcher("i10t3dCI");
+		Matcher matcher = pattern.matcher("i10t3dCI111");
 		System.out.println(matcher.matches());
 		System.out.println(matcher.group(1));
 		System.out.println(matcher.group(2));
