@@ -73,7 +73,7 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
         	logger.info("read idle:{}, then close this channel " + ctx.channel());
         	//TODO
         	//logger.info("read idle:{},该channel进入休眠状态", ctx.channel());
-        	ctx.close();
+            Commons.removeUserAndCloseChannel(ctx.channel());
         }
     }
     
