@@ -316,7 +316,7 @@ public class AuthenticationHandler extends SimpleChannelInboundHandler<byte[]> {
 		
 	}
 	
-	
+
 	/**
 	 * 在machine.lastconnecttime.hsetkey 这个hmap 中保存设备id对应的最近在线时间
 	 * @param deviceMachineId
