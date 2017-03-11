@@ -56,5 +56,5 @@ public class SocketServerConstants {
 	public static final int USER_TO_SOCKET_SERVER_REDIS_LIFETIME_SECONDS = 60;
 
 	
-	public static final int INTEVAL_UNACTIVE_CHANNEL_CLEANING = 5000;
+	public static final int INTEVAL_UNACTIVE_CHANNEL_CLEANING = 10000;//10000毫秒
 }

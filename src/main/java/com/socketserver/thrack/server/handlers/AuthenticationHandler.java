@@ -3,6 +3,7 @@ package com.socketserver.thrack.server.handlers;
 
 import java.io.IOException;
 
+import io.netty.channel.*;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -23,11 +24,6 @@ import com.socketserver.thrack.model.user.SocketUser;
 import com.socketserver.thrack.service.TokenCacheService;
 import com.socketserver.thrack.service.UserConnectionRegisterService;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import redis.clients.jedis.JedisCluster;
@@ -37,7 +33,7 @@ import redis.clients.jedis.JedisCluster;
  */
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class AuthenticationHandler extends SimpleChannelInboundHandler<byte[]> {
+public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
 	
 
 	@Autowired
@@ -74,10 +70,10 @@ public class AuthenticationHandler extends SimpleChannelInboundHandler<byte[]> {
         IdleStateEvent e = (IdleStateEvent) evt;
         if (e.state() == IdleState.READER_IDLE) {
             // The connection was OK but there was no traffic for last period.
-        	logger.info("read idle:" + ctx.channel());
+        	logger.info("read idle:{}, then close this channel " + ctx.channel());
         	//TODO
-        	logger.info("read idle:{},该channel进入休眠状态", ctx.channel());
-        	//ctx.close();
+        	//logger.info("read idle:{},该channel进入休眠状态", ctx.channel());
+        	ctx.close();
         }
     }
     
@@ -95,61 +91,8 @@ public class AuthenticationHandler extends SimpleChannelInboundHandler<byte[]> {
     }
 
 	@Override
-	protected void channelRead0( ChannelHandlerContext ctx, byte[] message ) throws Exception {
-		//发送  先校验再转义
-		//接收  先转义再校验
-
-		String bytesToHexString = CommonUtils.toHexString(message);
-		logger.info("接收转义前,接收到的bytes 转换成 16进制字符串：{}", bytesToHexString);
-
-		//数据报文转义
-		//logger.info("接收转义前,communication package received:{}",message);
-		message = CommonUtils.changeReceiveBytesDefine(message);
-		bytesToHexString = CommonUtils.toHexString(message);
-		//logger.info("接收转义后,communication package received:{}",message);
-		logger.info("接收转义后,接收到的bytes 转换成 16进制字符串：{}", bytesToHexString);
-		
-		//CRC16算法校验消息是否是有效消息
-		boolean verificationFlag = VerificationCRC16.doCheckByteData(message);
-		
-		logger.info("经过验证,verificationFlag:{},communication package received:{}",verificationFlag,message);
-		
-		//转换消息
-		DTUDataPackage dtuDataPackage = new DTUDataPackage(message);
-		//1、CRC16校验错误处理
-		if(!verificationFlag) {
-			logger.info("消息经过CRC16算法验证失败,返回验证失败消息,不关掉channel:{}",ctx.channel());
-			//回应客户端登陆失败
-			byte[] authOutBytes = sendMessage(dtuDataPackage, 
-									   SocketServerConstants.ORDER_EXE_STATUS_FAILURE, 
-									   dtuDataPackage.getToken());
-			//发送验证(CRC16算法验证失败)失败（，完成后关闭channel--改成不关闭channel）
-			ctx.writeAndFlush(authOutBytes);//
-		}
-		
-		//2、channel库中存在channel的处理方式
-		//判断是否已经有channel
-		ChannelStatus channelStatus = Commons.channelStatusMap.get(ctx.channel());
-		if(channelStatus==null) {
-			logger.info("AuthenticationHandler-->>channelRead0-->>channelStatusMap:{}",ctx.channel());
-			Commons.channelStatusMap.put( ctx.channel(), new ChannelStatus( DateTime.now() ));
-		} else {
-			logger.info("AuthenticationHandler-->>channelRead0-->>has channel");
-		}
-		
-		
-		//3、处理消息类型
-		//DTUDataPackage dtuDataPackage = new DTUDataPackage(message);
-		
-		//4、只处理状态位为 0x02 的请求，服务器主动发送，也用0x02标志
-		// 状态位为0x04时，需要将数据转发给windows客户端程序
-		if(dtuDataPackage.getStatus()==SocketServerConstants.ORDER_EXE_STATUS_SELFSEND) {
-			handlePackage(ctx, dtuDataPackage);
-		}
-		else {
-			return;
-		}
-		
+	public void channelRead( ChannelHandlerContext ctx, Object msg ) throws Exception {
+		logger.info("ChannelInboundHandlerAdapter:{}",msg.toString());
 	}
 
 	
@@ -318,17 +261,6 @@ public class AuthenticationHandler extends SimpleChannelInboundHandler<byte[]> {
 	
 
 	/**
-	 * 在machine.lastconnecttime.hsetkey 这个hmap 中保存设备id对应的最近在线时间
-	 * @param deviceMachineId
-	 */
-	private void recordMachineConnectTime(String deviceMachineId) {
-		//在machine.lastconnecttime.hsetkey 这个hmap 中保存设备id对应的最近在线时间
-		String systemTime = String.valueOf(System.currentTimeMillis()/1000);
-		jedisCluster.hset(SocketServerConstants.MACHINE_LASTCONNECTTIME_HSETKEY, deviceMachineId, systemTime);
-	}
-
-
-	/**
 	 * 发送验证消息
 	 * @param dtuDataPackage
 	 * @param status
@@ -350,27 +282,6 @@ public class AuthenticationHandler extends SimpleChannelInboundHandler<byte[]> {
 		logger.info("sendMessage 发送转义后,communication package received:{}",authOutBytes);
 		
 		return authOutBytes;
-	}
-	
-
-	/**
-	 * 判断是否是设备的操作
-	 * @param dtuDataPackage
-	 * @return
-	 */
-	private boolean isDeviceOption(DTUDataPackage dtuDataPackage) {
-
-		//平台向设备传透数据
-		if(dtuDataPackage.getOrderWord()==SocketServerConstants.ORDER_WORD_SERVER_SEND_DATA) {
-			return false;
-		}
-
-		//终端相关操作(平台或者客户端操作设备)
-		if(dtuDataPackage.getOrderType()==SocketServerConstants.ORDER_TYPE_TERMINAL) {
-			return false;
-		}
-
-		return true;
 	}
 
 }
