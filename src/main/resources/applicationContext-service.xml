@@ -10,7 +10,7 @@
        					http://www.springframework.org/schema/task
        					http://www.springframework.org/schema/task/spring-task-3.0.xsd">
 
-	<context:component-scan base-package="com.socketserver.chat.service" />
+	<context:component-scan base-package="com.socketserver.thrack.service" />
 
 	<!-- 配置异步线程池，由于apns推送返回很慢， core pool size设到100, 最大值设到10000 -->
 	<task:annotation-driven executor="asyncExecutor" />

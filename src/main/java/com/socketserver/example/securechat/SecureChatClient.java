@@ -9,9 +9,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.socketserver.chat.commons.CommonUtils;
-import com.socketserver.chat.commons.VerificationCRC16;
-import com.socketserver.chat.model.message.DTUDataPackage;
+import com.socketserver.thrack.commons.CommonUtils;
+import com.socketserver.thrack.commons.VerificationCRC16;
+import com.socketserver.thrack.model.message.DTUDataPackage;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -21,7 +21,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
 /**
- * Simple SSL chat client modified from {@link TelnetClient}.
+ * Simple SSL thrack client modified from {@link TelnetClient}.
  */
 public final class SecureChatClient {
 

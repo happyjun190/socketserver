@@ -27,7 +27,7 @@
 	&lt;!&ndash; myBatis mapper文件位置 &ndash;&gt;
 	<bean id="baseSqlSessionFactory" abstract="true" class="org.mybatis.spring.SqlSessionFactoryBean">
 		&lt;!&ndash; <property name="dataSource" ref="ds2" /> &ndash;&gt; &lt;!&ndash; 各个数据源自己指定dataSource ref&ndash;&gt;
-		<property name="mapperLocations" value="classpath:com/socketserver/chat/mapper/*.xml" />
+		<property name="mapperLocations" value="classpath:com/socketserver/thrack/mapper/*.xml" />
 	</bean>
 
 	<bean id="ds1" parent="baseDataSource">
@@ -37,8 +37,8 @@
 		<property name="dataSource" ref="ds1" />
 	</bean>
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="com.socketserver.chat.dao" />
-		<property name="annotationClass" value="com.socketserver.chat.repositories.IndustrynetRepository" />
+		<property name="basePackage" value="com.socketserver.thrack.dao" />
+		<property name="annotationClass" value="com.socketserver.thrack.repositories.IndustrynetRepository" />
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory1" />
 	</bean>
 
@@ -83,14 +83,14 @@
 
 	<!-- 扫描dao层的接口 -->
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="com.socketserver.chat.dao.**" />
+		<property name="basePackage" value="com.socketserver.thrack.dao.**" />
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
 	</bean>
 
 	<!-- 扫描dao层的xml文件 -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource_1" />
-		<property name="mapperLocations" value="classpath:com/socketserver/chat/mapper/*.xml"></property>
+		<property name="mapperLocations" value="classpath:com/socketserver/thrack/mapper/*.xml"></property>
 	</bean>
 
 	<!-- 事物管理 -->

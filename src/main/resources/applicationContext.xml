@@ -11,17 +11,19 @@
        					http://www.springframework.org/schema/cache/spring-cache.xsd
        					">
 	
-	<import resource="applicationContext-dao.xml" />
+	<!--<import resource="applicationContext-dao.xml" />-->
 	<import resource="applicationContext-service.xml" />
 	
-	<context:component-scan base-package="com.socketserver.chat.configuration" />
+	<context:component-scan base-package="com.socketserver.thrack.configuration" />
 
 	<!-- 引入属性文件 -->
 	<context:property-placeholder location="classpath:jdbc1.properties,classpath:redis.properties" />
 	<!-- 引入同文件夹下的mybatis属性配置文件 -->
 	<import resource="applicationContext-mybatis.xml" />
 	<!-- 引入同文件夹下的netty配置文件 -->
-	<import resource="applicationContext-netty.xml" />
+	<!--<import resource="applicationContext-netty.xml" />-->
+	<context:component-scan base-package="com.socketserver.thrack.server" />
+	<context:component-scan base-package="com.socketserver.thrack.dao" />
 
 	<cache:annotation-driven cache-manager="guavaCacheManager"/>
 

@@ -1,6 +1,6 @@
 package com.socketserver.example.securechat;
 
-import com.socketserver.chat.model.message.DTUDataPackage;
+import com.socketserver.thrack.model.message.DTUDataPackage;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

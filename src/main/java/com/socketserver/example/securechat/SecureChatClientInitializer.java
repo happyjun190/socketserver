@@ -1,6 +1,6 @@
 package com.socketserver.example.securechat;
 
-import com.socketserver.chat.commons.SocketServerConstants;
+import com.socketserver.thrack.commons.SocketServerConstants;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
