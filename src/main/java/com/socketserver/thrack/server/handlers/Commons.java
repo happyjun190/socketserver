@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
-import com.socketserver.thrack.commons.SocketServerConstants;
 import com.socketserver.thrack.model.user.SocketUser;
 import com.socketserver.thrack.server.handlers.AuthenticationHandler.ChannelStatus;
 
@@ -54,11 +53,11 @@ public class Commons {
 		if( channel.isActive() ) {
 			channel.writeAndFlush( sendingStr + "\n" );
 		} else {
-			removeUserAndCloseChannel(channel);
+			removeCloseChannel(channel);
 		}
 	}
 	
-	public static void removeUserAndCloseChannel( Channel channel ) {
+	public static void removeCloseChannel(Channel channel ) {
 		if(channel == null) {
 			logger.info("null channel.");
 			return;

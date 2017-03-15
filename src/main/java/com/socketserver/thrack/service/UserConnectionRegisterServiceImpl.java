@@ -31,14 +31,7 @@ public class UserConnectionRegisterServiceImpl implements UserConnectionRegister
 	
 	private static final String PREFIX_USER_SET = "socketUserSetConnectedTo:";
 	private static final String PREFIX_USER_KEY = "userToSocketAddr:";
-	public static final String PREFIX_SCM_USER_SET_OF_PROVIDER = "scmUserOfProviderSetOfProvider:";
-	public static final String PREFIX_SCM_USER = "scmUser:";
-	
-	public static final String USER_VERSION_HSET_KEY = "socketserver.version";
-	
-	// Rule: KEY : SocketUser -> timestamp
-	public static final String USER_ONLINE_SET_KEY	= "socketserver.online";
-	
+
 	private static String USER_SET_KEY = null;
 	private static String LOCAL_ADDR_STR = null;
     
@@ -61,11 +54,11 @@ public class UserConnectionRegisterServiceImpl implements UserConnectionRegister
 	}
 
 	@Override
-	public void removeUserChannelFromThisServer(Channel channel) {
+	public void removeChannelFromThisServer(Channel channel) {
 		// 先取出用户对象
 		SocketUser user = Commons.activeDeviceChannelMap.inverse().get(channel);
 		// 再从用户channel集合移除
-		Commons.removeUserAndCloseChannel(channel);
+		Commons.removeCloseChannel(channel);
 		initKeys(channel);		
 		if(user != null) {
 			logger.info("removing user from redis: {}, channel: {}", user, channel);
@@ -73,11 +66,7 @@ public class UserConnectionRegisterServiceImpl implements UserConnectionRegister
 			jedisCluster.srem(USER_SET_KEY, user.toString());
 		}
 	}
-	
-	@Override
-	public String getUserConnectingAddress(SocketUser user) {
-		return jedisCluster.get(PREFIX_USER_KEY + user);
-	}
+
 
 	private void initKeys(Channel channel) {
 		if(USER_SET_KEY == null) {
@@ -86,41 +75,5 @@ public class UserConnectionRegisterServiceImpl implements UserConnectionRegister
 			USER_SET_KEY = PREFIX_USER_SET + LOCAL_ADDR_STR;
 		}
 	}
-	
-	@Override
-	public void setVersion(SocketUser user, String version) {
-		userVersionMap.put(user, version);
-		
-		jedisCluster.hset(USER_VERSION_HSET_KEY, user.toString(), version);
-	}
-	
-	@Override
-	public String getVersion(SocketUser user) {
-		String version = userVersionMap.get(user);
-		if (!StringUtils.isEmpty(version)) {
-			return version;
-		}
-		else {
-			return jedisCluster.hget(USER_VERSION_HSET_KEY, user.toString());
-		}
-		
-	}
 
-	@Override
-	public void login(SocketUser user) {
-		// Field: socket user, value: login timestamp
-		jedisCluster.hset(USER_ONLINE_SET_KEY, user.toString(), 
-				String.valueOf((DateTime.now().getMillis() / 1000)));
-	}
-
-	@Override
-	public void logout(SocketUser user) {
-		jedisCluster.hdel(USER_ONLINE_SET_KEY, user.toString());
-	}
-
-	@Override
-	public boolean isOnline(SocketUser user) {
-		return jedisCluster.hget(USER_ONLINE_SET_KEY, user.toString()) != null;
-	}
-	
 }

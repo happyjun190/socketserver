@@ -9,8 +9,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.socketserver.thrack.commons.CommonUtils;
-import com.socketserver.thrack.commons.VerificationCRC16;
 import com.socketserver.thrack.model.message.DTUDataPackage;
 
 import io.netty.bootstrap.Bootstrap;
@@ -21,7 +19,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
 /**
- * Simple SSL thrack client modified from {@link TelnetClient}.
+ * Simple SSL thrack client modified from {@link}.
  */
 public final class SecureChatClient {
 
@@ -91,11 +89,11 @@ public final class SecureChatClient {
     		//接收  先转义再校验
             //发送校验
 			logger.info("发送校验前,communication package received:{}",serverReceiveOutMessageBytes);
-			VerificationCRC16.doCrc16CheckHighLowByte(serverReceiveOutMessageBytes);
+			//VerificationCRC16.doCrc16CheckHighLowByte(serverReceiveOutMessageBytes);
 			logger.info("发送校验前,communication package received:{}",serverReceiveOutMessageBytes);
             
             logger.info("发送转义前,communication package received:{}",serverReceiveOutMessageBytes);
-			serverReceiveOutMessageBytes = CommonUtils.changeSendBytesDefine(serverReceiveOutMessageBytes);
+			//serverReceiveOutMessageBytes = CommonUtils.changeSendBytesDefine(serverReceiveOutMessageBytes);
 			logger.info("发送转义后,communication package received:{}",serverReceiveOutMessageBytes);
 			
 			

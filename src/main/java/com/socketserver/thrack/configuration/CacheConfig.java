@@ -18,7 +18,6 @@ import com.google.common.cache.CacheBuilder;
  *
  */
 @Configuration
-//@EnableCaching //@EnableCaching和Mybatis配置有冲突，改为xml文件中配置
 public class CacheConfig {
 
 	public static final int DEFAULT_MAXSIZE = 50000;

@@ -20,7 +20,7 @@ public class SocketUser implements Comparable<SocketUser>, Serializable {
 	private Integer userId;	// type = 3时，SCM版用户，这个userId 实际上是 providerId
 	private Integer userType;
 	private String deviceCustomId;	// 识别设备的Id, 用于支持SCM版多设备同时登录的需求
-	
+
 	private static Pattern toStringPattern = Pattern.compile("i(\\d+)t(\\d+)scm(\\d+)dCI(\\S*)");
 	
 	public SocketUser(Integer userId, Integer userType, String deviceCustomId) {
@@ -41,7 +41,7 @@ public class SocketUser implements Comparable<SocketUser>, Serializable {
 				(String) map.get("todi")
 				);
 	}
-	
+
 	public Integer getUserId() {
 		return userId;
 	}
@@ -50,11 +50,11 @@ public class SocketUser implements Comparable<SocketUser>, Serializable {
 		return userType;
 	}
 	
-	
+
 	public String getDeviceCustomId() {
 		return deviceCustomId;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "i" + userId + "t" + userType + "dCI" + deviceCustomId;
@@ -109,10 +109,10 @@ public class SocketUser implements Comparable<SocketUser>, Serializable {
 	    oos.writeLong(this.userId);
 	    oos.writeInt(this.userType);
 	    oos.writeUTF(this.deviceCustomId);
-	}	
+	}
 	/**
 	 * 自定义序列化方法，以缩短cacheable生成的key长度
-	 * @param oos
+	 * @param ois
 	 * @throws IOException
 	 */
 	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {

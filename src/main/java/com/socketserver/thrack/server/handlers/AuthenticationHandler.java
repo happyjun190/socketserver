@@ -16,9 +16,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.socketserver.thrack.commons.CommonUtils;
 import com.socketserver.thrack.commons.SocketServerConstants;
-import com.socketserver.thrack.commons.VerificationCRC16;
 import com.socketserver.thrack.model.message.DTUDataPackage;
 import com.socketserver.thrack.model.user.SocketUser;
 import com.socketserver.thrack.service.TokenCacheService;
@@ -73,26 +71,35 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
         	logger.info("read idle:{}, then close this channel " + ctx.channel());
         	//TODO
         	//logger.info("read idle:{},该channel进入休眠状态", ctx.channel());
-            Commons.removeUserAndCloseChannel(ctx.channel());
+            Commons.removeCloseChannel(ctx.channel());
         }
     }
     
     @Override
     public void channelUnregistered(final ChannelHandlerContext ctx) throws Exception {
     	logger.info("channel unregistered: {}", ctx.channel());
-    	userConnectionRegisterService.removeUserChannelFromThisServer(ctx.channel());
+    	userConnectionRegisterService.removeChannelFromThisServer(ctx.channel());
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
     	logger.error("exception", cause);
     	logger.info( "remove connection: {}", ctx.channel());
-    	userConnectionRegisterService.removeUserChannelFromThisServer(ctx.channel());
+    	userConnectionRegisterService.removeChannelFromThisServer(ctx.channel());
     }
 
 	@Override
 	public void channelRead( ChannelHandlerContext ctx, Object msg ) throws Exception {
 		logger.info("ChannelInboundHandlerAdapter:{}",msg.toString());
+
+		//1、查看是否存在channel,如果存在，则进行第4步骤crc算法校验，如果不存在，查看数据库中是否存在校验串
+
+		//2、保存channel到双向map中
+
+		//3、处理心跳数据 0x3030(16进制)=00(字符串)
+
+
+		//4、crc算法校验
 	}
 
 	
@@ -116,7 +123,7 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
 	 */
 	private void registerMachineToServer( final ChannelHandlerContext ctx, DTUDataPackage dtuDataPackage) {
 
-		String machineId = CommonUtils.generateMachineIdFromBytes(dtuDataPackage.getMachineId());
+		String machineId = "0";//CommonUtils.generateMachineIdFromBytes(dtuDataPackage.getMachineId());
 
 		//1、设置登陆用户
 		SocketUser authUser = new SocketUser(
@@ -155,7 +162,7 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
 				// 向原channel发送踢掉通知，不接受新channel验证
 				logger.info("user has different last channel remaining : {}", userLastChannel);
 
-				userConnectionRegisterService.removeUserChannelFromThisServer( userLastChannel );
+				userConnectionRegisterService.removeChannelFromThisServer( userLastChannel );
 
 				//回应客户端登陆失败
 				authOutBytes = sendMessage(dtuDataPackage,
@@ -212,7 +219,7 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
 	private ChannelFutureListener closeChannelListener = new ChannelFutureListener() {
 		@Override
 		public void operationComplete(ChannelFuture future) throws Exception {
-			userConnectionRegisterService.removeUserChannelFromThisServer(future.channel());
+			userConnectionRegisterService.removeChannelFromThisServer(future.channel());
 		}
 	};
 	
@@ -267,21 +274,7 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
 	 * @param tokenBytes
 	 */
 	private static byte[] sendMessage(DTUDataPackage dtuDataPackage, byte status, byte[] tokenBytes) {
-		dtuDataPackage.setToken(tokenBytes);
-		dtuDataPackage.setStatus(status);
-		
-		byte[] authOutBytes = dtuDataPackage.getBytesFromDTUDataPackage();
-		
-		//发送  先校验再转义
-		//接收  先转义再校验
-		//发送校验
-		VerificationCRC16.doCrc16CheckHighLowByte(authOutBytes);
-		//发送转义
-		logger.info("sendMessage 发送转义前,communication package received:{}",authOutBytes);
-		authOutBytes = CommonUtils.changeSendBytesDefine(authOutBytes);
-		logger.info("sendMessage 发送转义后,communication package received:{}",authOutBytes);
-		
-		return authOutBytes;
+		return null;
 	}
 
 }
