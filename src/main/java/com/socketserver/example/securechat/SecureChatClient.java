@@ -59,47 +59,19 @@ public final class SecureChatClient {
             ch.writeAndFlush("0x040x0f0x090x0f0x0f0x0e0e000a0b\r\n");
             ch.writeAndFlush("0x050x0f0x090x0f0x0f0x0e0e000a0b\r\n");
             ch.writeAndFlush("0x060x0f0x090x0f0x0f0x0e0e000a0b\r\n");*/
-            
+
             //服务器主动推送消息
-            /*byte[] message = {85, 35, 0, (byte) 0xAA, (byte) 0xFF, -66, 116, 0, 0, (byte)0x02, 
+            /*byte[] message = {85, 35, 0, (byte) 0xAA, (byte) 0xFF, -66, 116, 0, 0, (byte)0x02,
             				  //0, 0, 0, 12, 41, 97, 99, -45, 80, 87,
             				  0, 0, 0, 12, 41, 97, 99, -45,
             				  0, 0, 0, 0, 0, 0, 0, 0,
             				  0, 0, -86};*/
             //登陆消息
-            byte[] message = {85, 35, 0, (byte) 0xA0, 0x02, -66, 116, 0, 0, (byte)0x02, 
-  				  //0, 0, 0, 12, 41, 97, 99, -45, 80, 87,
-  				  0, 0, 0, 12, 41, 97, 99, -45,
-  				  0, 0, 0, 0, 0, 0, 0, 0,
-  				  0, 0, -86};
-            
-            DTUDataPackage dtuDataPackage = new DTUDataPackage(message);
-            
-            Map<String, Object> map = new HashMap<String, Object>();
-            map.put("token", "cb2ddcd0d251459084bdc033a9f5960e");
-            map.put("userAccount", "18565209716");
-            map.put("password", "e10adc3949ba59abbe56e057f20f883e");
-            String data = jsonMapper.writeValueAsString(map);
-            
-            dtuDataPackage.setData(data.getBytes());
-            
-            byte[] serverReceiveOutMessageBytes = dtuDataPackage.getBytesFromDTUDataPackage();
-            
-            //发送  先校验再转义
-    		//接收  先转义再校验
-            //发送校验
-			logger.info("发送校验前,communication package received:{}",serverReceiveOutMessageBytes);
-			//VerificationCRC16.doCrc16CheckHighLowByte(serverReceiveOutMessageBytes);
-			logger.info("发送校验前,communication package received:{}",serverReceiveOutMessageBytes);
-            
-            logger.info("发送转义前,communication package received:{}",serverReceiveOutMessageBytes);
-			//serverReceiveOutMessageBytes = CommonUtils.changeSendBytesDefine(serverReceiveOutMessageBytes);
-			logger.info("发送转义后,communication package received:{}",serverReceiveOutMessageBytes);
-			
-			
+            byte[] message = {(byte)0xAA, (byte)0xBB, (byte)0xCC};
+
 			//System.out.println(serverReceiveOutMessageBytes);
-            
-            ChannelFuture lastWriteFuture = ch.writeAndFlush(serverReceiveOutMessageBytes);
+
+            ChannelFuture lastWriteFuture = ch.writeAndFlush(message);
             
             BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
             for (;;) {

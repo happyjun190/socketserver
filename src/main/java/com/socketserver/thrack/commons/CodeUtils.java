@@ -94,10 +94,38 @@ public final class CodeUtils
 		return sb.toString();
 	}
 
+
+	public static final String getHexStringNoBlank(byte[] buf, int start, int len)
+	{
+		StringBuffer sb = new StringBuffer(1024);
+		for (int i = start; i < len; i++)
+		{
+			sb.append(String.format("%02X", buf[i]));
+		}
+		return sb.toString();
+	}
+
+
+	/**
+	 * 有空格的String  如  XX AA OA
+	 * @param buf
+	 * @return
+	 */
 	public static String getHexString(byte[] buf)
 	{
 		return getHexString(buf, 0, buf.length);
 	}
+
+	/**
+	 * 无空格string  如  XXAAOA
+	 * @param buf
+	 * @return
+	 */
+	public static String getHexStringNoBlank(byte[] buf)
+	{
+		return getHexStringNoBlank(buf, 0, buf.length);
+	}
+
 
 	public static void main(String[] args)
 	{

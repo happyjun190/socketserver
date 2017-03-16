@@ -2,7 +2,6 @@ package com.socketserver.thrack.service;
 
 import com.socketserver.thrack.commons.SocketServerConstants;
 import com.socketserver.thrack.commons.StringUtil;
-import com.socketserver.thrack.dao.UserDeviceDAO;
 import com.socketserver.thrack.model.userdevice.TabUserDevice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +15,8 @@ public class TokenCacheServiceImpl implements TokenCacheService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(TokenCacheServiceImpl.class);
 	//private static final ObjectMapper jsonMapper = new ObjectMapper();
-	@Autowired
-	private UserDeviceDAO userDeviceDAO;
+	/*@Autowired
+	private UserDeviceDAO userDeviceDAO;*/
 
 	@Autowired
 	private JedisCluster jedisCluster;
@@ -26,7 +25,7 @@ public class TokenCacheServiceImpl implements TokenCacheService {
 
 	@Override
 	public String generateMachineToken(String machineId, String existToken) {
-		TabUserDevice tabUserDevice = userDeviceDAO.getUserDeviceByMachineId(machineId);
+		TabUserDevice tabUserDevice = null;//userDeviceDAO.getUserDeviceByMachineId(machineId);
 		if(tabUserDevice==null) {
 			return null;
 		}

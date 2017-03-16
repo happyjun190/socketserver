@@ -49,7 +49,10 @@ public class SecureChatServerInitializer extends ChannelInitializer<SocketChanne
         
         // and then business logic.
         //1、IDEL+验证数据(CRC16算法)+消息基本处理
-        pipeline.addLast(new IdleStateHandler(SocketServerConstants.READ_IDLE_TIMEOUT_IN_SECONDS, 0, 0), beanFactory.getBean(AuthenticationHandler.class));
+        pipeline.addLast(new IdleStateHandler(SocketServerConstants.READ_IDLE_TIMEOUT_IN_SECONDS,
+                                             0,
+                                             0),
+                                              beanFactory.getBean(AuthenticationHandler.class));
 
         // 以下handlers包含阻塞操作，使用独立的eventGroup处理
         // use factory to get new beans

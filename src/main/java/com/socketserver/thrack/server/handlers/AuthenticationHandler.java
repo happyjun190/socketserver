@@ -3,6 +3,11 @@ package com.socketserver.thrack.server.handlers;
 
 import java.io.IOException;
 
+import com.socketserver.thrack.commons.CodeUtils;
+import com.socketserver.thrack.dao.DtuDeviceDAO;
+import com.socketserver.thrack.model.device.TabDtuDevice;
+import com.socketserver.thrack.server.client.Client;
+import com.socketserver.thrack.server.client.ClientMap;
 import io.netty.channel.*;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -38,6 +43,8 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
 	private JedisCluster jedisCluster;
 	@Autowired
 	private TokenCacheService tokenCacheService;
+	@Autowired
+	private DtuDeviceDAO dtuDeviceDAO;
 
 
 	@Autowired
@@ -50,13 +57,14 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
     @Override
 	public void channelActive(final ChannelHandlerContext ctx) {
     	//判断是否已经有channel
-		ChannelStatus channelStatus = Commons.channelStatusMap.get(ctx.channel());
+		/*ChannelStatus channelStatus = Commons.channelStatusMap.get(ctx.channel());
 		if(channelStatus==null) {
 			logger.info("AuthenticationHandler-->>channelActive-->>channelStatusMap:{}",ctx.channel());
 			Commons.channelStatusMap.put( ctx.channel(), new ChannelStatus( DateTime.now() ));
 		} else {
 			logger.info("AuthenticationHandler-->>channelActive-->>has channel");
-		}
+		}*/
+		logger.info("AuthenticationHandler-->>channelActive");
 	}
     
     @Override
@@ -93,6 +101,22 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
 		logger.info("ChannelInboundHandlerAdapter:{}",msg.toString());
 
 		//1、查看是否存在channel,如果存在，则进行第4步骤crc算法校验，如果不存在，查看数据库中是否存在校验串
+		String authKey = CodeUtils.getHexStringNoBlank((byte[]) msg);
+		Client client = ClientMap.getClient(authKey);
+		//channel还未认证
+		if(client==null) {
+			//auth
+			TabDtuDevice tabDtuDevice = dtuDeviceDAO.getDtuDeviceByAuthKey(authKey);
+			//验证不通过
+			if(tabDtuDevice==null) {
+				ctx.close();
+			} else {
+				//验证通过
+				client = new Client(authKey, ctx.channel());
+				ClientMap.addClient(ctx.channel(), client);
+			}
+		}
+
 
 		//2、保存channel到双向map中
 
