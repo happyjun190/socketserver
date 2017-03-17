@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * Created by wushenjun on 2017/3/17.
+ * 逆变器数据处理handler
  */
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)

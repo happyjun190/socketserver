@@ -34,6 +34,7 @@ import redis.clients.jedis.JedisCluster;
 
 /**
  * Handles a server-side channel.
+ * 权限认证及相关处理Handler
  */
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
