@@ -9,6 +9,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
+import com.socketserver.thrack.server.client.Client;
+import com.socketserver.thrack.server.client.ClientMap;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -57,19 +59,17 @@ public class Commons {
 		}
 	}
 	
-	public static void removeCloseChannel(Channel channel ) {
+
+	public static void removeCloseChannel(Channel channel) {
 		if(channel == null) {
 			logger.info("null channel.");
 			return;
 		}
 		// 从各种记录集合中移除用户与channel
-		SocketUser removingUser = activeDeviceChannelMap.inverse().get( channel );
-		logger.info("removing user: {}, channel: {}", removingUser, channel);
-		if(removingUser != null ) {
-			hasUnreadUserSet.remove( removingUser );
-		}
-		activeDeviceChannelMap.inverse().remove( channel );
-		channelStatusMap.remove( channel );
+		Client client = ClientMap.getClient(channel);
+		logger.info("removing user: {}, channel: {}", client, channel);
+
+		ClientMap.removeClient(channel);
 		if(channel.isOpen()) {
 			channel.close();
 		}

@@ -1,5 +1,6 @@
 package com.socketserver.thrack.server;
 
+import com.socketserver.thrack.server.handlers.HeartBeatHandler;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -53,6 +54,9 @@ public class SecureChatServerInitializer extends ChannelInitializer<SocketChanne
                                              0,
                                              0),
                                               beanFactory.getBean(AuthenticationHandler.class));
+        // 以下handlers包含阻塞操作，使用独立的eventGroup处理
+        // use factory to get new beans
+        pipeline.addLast(heartBeatHandlerGroup, beanFactory.getBean(HeartBeatHandler.class));
 
         // 以下handlers包含阻塞操作，使用独立的eventGroup处理
         // use factory to get new beans

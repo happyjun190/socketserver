@@ -3,6 +3,7 @@ package com.socketserver.thrack.server.cleaners;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.socketserver.thrack.server.client.ClientMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,14 +32,14 @@ public class CleanUnactiveChannels implements Runnable {
 			e.printStackTrace();
 		}
 		
-		Set<Entry<Channel, ChannelStatus>> channelStatusEntries = Commons.channelStatusMap.entrySet();
+		//Set<Entry<Channel, ChannelStatus>> channelStatusEntries = Commons.channelStatusMap.entrySet();
 		
 		while(true) {
 			try {
 				// 清扫间隔
 				Thread.sleep( SocketServerConstants.INTEVAL_UNACTIVE_CHANNEL_CLEANING );
 				
-				logger.info("cleaning begins, channels alive: " + channelStatusEntries.size());
+				logger.info("cleaning begins, channels alive: " + ClientMap.mapKey.size());
 
 			} catch (Exception e1) {
 				e1.printStackTrace();

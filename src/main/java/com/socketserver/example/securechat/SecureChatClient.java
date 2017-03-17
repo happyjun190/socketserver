@@ -23,7 +23,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
  */
 public final class SecureChatClient {
 
-	static final String HOST = System.getProperty("host", "192.168.192.1");
+	static final String HOST = System.getProperty("host", "127.0.0.1");
 	//static final String HOST = System.getProperty("host", "127.0.0.1");
     static final int PORT = Integer.parseInt(System.getProperty("port", "8992"));
     private static final Logger logger = LoggerFactory.getLogger(SecureChatClient.class);
@@ -67,11 +67,15 @@ public final class SecureChatClient {
             				  0, 0, 0, 0, 0, 0, 0, 0,
             				  0, 0, -86};*/
             //登陆消息
-            byte[] message = {(byte)0xAA, (byte)0xBB, (byte)0xCC};
+            byte[] message1 = {(byte)0xAA, (byte)0xBB, (byte)0xCC};
+            byte[] message2 = {(byte)0x30, (byte)0x30};
+
+
+            int index = 0;
 
 			//System.out.println(serverReceiveOutMessageBytes);
 
-            ChannelFuture lastWriteFuture = ch.writeAndFlush(message);
+            ChannelFuture lastWriteFuture = ch.writeAndFlush(message1);
             
             BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
             for (;;) {
@@ -80,9 +84,17 @@ public final class SecureChatClient {
                     break;
                 }
 
+                if(index%2==1) {
+                    lastWriteFuture = ch.writeAndFlush(message1);
+                } else {
+                    lastWriteFuture = ch.writeAndFlush(message2);
+                }
+
+                index++;
+                logger.info("this is the client test for heartbeat and auth, and index is {}", index);
                 // Sends the received line to the server.
                 //lastWriteFuture = ch.writeAndFlush(line + "\0");
-                lastWriteFuture = ch.writeAndFlush(line);
+
                 // If user typed the 'bye' command, wait until the server closes
                 // the connection.
                 if ("bye".equals(line.toLowerCase())) {

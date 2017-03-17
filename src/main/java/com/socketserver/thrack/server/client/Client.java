@@ -21,13 +21,6 @@ public class Client
 		this.channel = channel;
 	}
 
-	@Override
-
-	public String toString()
-	{
-		return "[authKey=" + authKey + ", status=" + status + "]";
-	}
-
 	public String getAuthKey()
 	{
 		return authKey;
@@ -88,4 +81,14 @@ public class Client
 		this.channel = channel;
 	}
 
+
+	@Override
+	public String toString() {
+		return "Client{" +
+				"authKey='" + authKey + '\'' +
+				", status=" + status +
+				", channel=" + channel +
+				", lastAccess=" + lastAccess +
+				'}';
+	}
 }

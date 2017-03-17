@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ClientMap
 {
 	private static final ConcurrentHashMap<Channel, Client> mapCha = new ConcurrentHashMap<>();
-	private static final ConcurrentHashMap<String, Client> mapKey = new ConcurrentHashMap<>();
+	public static final ConcurrentHashMap<String, Client> mapKey = new ConcurrentHashMap<>();
 
 	public synchronized static void addClient(Channel channel, Client client)
 	{

@@ -8,6 +8,7 @@ import com.socketserver.thrack.dao.DtuDeviceDAO;
 import com.socketserver.thrack.model.device.TabDtuDevice;
 import com.socketserver.thrack.server.client.Client;
 import com.socketserver.thrack.server.client.ClientMap;
+import com.socketserver.thrack.server.client.Constants;
 import io.netty.channel.*;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -57,14 +58,13 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
     @Override
 	public void channelActive(final ChannelHandlerContext ctx) {
     	//判断是否已经有channel
-		/*ChannelStatus channelStatus = Commons.channelStatusMap.get(ctx.channel());
-		if(channelStatus==null) {
-			logger.info("AuthenticationHandler-->>channelActive-->>channelStatusMap:{}",ctx.channel());
-			Commons.channelStatusMap.put( ctx.channel(), new ChannelStatus( DateTime.now() ));
+		Client client = ClientMap.getClient(ctx.channel());
+		if(client==null) {
+			logger.info("AuthenticationHandler-->>channelActive-->>ClientMap.addClient:{}",ctx.channel());
+			ClientMap.addClient(ctx.channel(), client);
 		} else {
 			logger.info("AuthenticationHandler-->>channelActive-->>has channel");
-		}*/
-		logger.info("AuthenticationHandler-->>channelActive");
+		}
 	}
     
     @Override
@@ -77,23 +77,22 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
         if (e.state() == IdleState.READER_IDLE) {
             // The connection was OK but there was no traffic for last period.
         	logger.info("read idle:{}, then close this channel " + ctx.channel());
-        	//TODO
-        	//logger.info("read idle:{},该channel进入休眠状态", ctx.channel());
-            Commons.removeCloseChannel(ctx.channel());
+			Commons.removeCloseChannel(ctx.channel());
         }
     }
     
     @Override
     public void channelUnregistered(final ChannelHandlerContext ctx) throws Exception {
     	logger.info("channel unregistered: {}", ctx.channel());
-    	userConnectionRegisterService.removeChannelFromThisServer(ctx.channel());
+    	//userConnectionRegisterService.removeChannelFromThisServer(ctx.channel());
+		Commons.removeCloseChannel(ctx.channel());
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
     	logger.error("exception", cause);
     	logger.info( "remove connection: {}", ctx.channel());
-    	userConnectionRegisterService.removeChannelFromThisServer(ctx.channel());
+		Commons.removeCloseChannel(ctx.channel());
     }
 
 	@Override
@@ -102,9 +101,9 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
 
 		//1、查看是否存在channel,如果存在，则进行第4步骤crc算法校验，如果不存在，查看数据库中是否存在校验串
 		String authKey = CodeUtils.getHexStringNoBlank((byte[]) msg);
-		Client client = ClientMap.getClient(authKey);
+		Client client = ClientMap.getClient(ctx.channel());
 		//channel还未认证
-		if(client==null) {
+		if(client==null||client.getStatus()== Client.Status.INIT) {//TODO
 			//auth
 			TabDtuDevice tabDtuDevice = dtuDeviceDAO.getDtuDeviceByAuthKey(authKey);
 			//验证不通过
@@ -113,17 +112,25 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
 			} else {
 				//验证通过
 				client = new Client(authKey, ctx.channel());
+				client.touchSession(Client.Status.AUTH);
 				ClientMap.addClient(ctx.channel(), client);
 			}
+			return;
 		}
 
 
 		//2、保存channel到双向map中
 
-		//3、处理心跳数据 0x3030(16进制)=00(字符串)
 
+		//3、处理心跳数据 0x3030(16进制)=00(字符串)
+		if(authKey.equals(Constants.HEART_BEAT_MSG)) {
+			ctx.fireChannelRead(msg);
+			return;
+		}
 
 		//4、crc算法校验
+
+
 	}
 
 	
