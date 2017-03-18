@@ -3,7 +3,7 @@ package com.socketserver.thrack.model.device;
 import java.util.Date;
 
 /**
- * Created by ziye on 2017/3/16.
+ * Created by wushenjun on 2017/3/16.
  */
 public class TabDtuDevice {
     private int id;//主键

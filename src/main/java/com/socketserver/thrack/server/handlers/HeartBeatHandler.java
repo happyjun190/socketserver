@@ -44,6 +44,8 @@ public class HeartBeatHandler extends ChannelInboundHandlerAdapter {
                 client.touchSession(Client.Status.ACTIVE);
                 ctx.flush();
             }
+            //心跳消息，不再下传
+            return;
         }
         //非心跳消息,往下传
         ctx.fireChannelRead(msg);

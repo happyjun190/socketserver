@@ -2,11 +2,14 @@ package com.socketserver.thrack.server.client;
 
 import io.netty.channel.Channel;
 
+import java.util.Map;
+
 public class Client
 {
 	private String authKey;
 	private Status status = Status.INIT;
 	private Channel channel;
+	private Map<String, ClientInverterStats> inverterStatsMap;
 
 	private long lastAccess = -1l;
 
@@ -15,10 +18,11 @@ public class Client
 		INIT, AUTH, ACTIVE, TIMEOUT, BLOCK, BLACKLIST
 	}
 
-	public Client(String authKey, Channel channel)
+	public Client(String authKey, Channel channel, Map<String, ClientInverterStats> inverterStatsMap)
 	{
 		this.authKey = authKey;
 		this.channel = channel;
+		this.inverterStatsMap = inverterStatsMap;
 	}
 
 	public String getAuthKey()
@@ -81,6 +85,13 @@ public class Client
 		this.channel = channel;
 	}
 
+	public Map<String, ClientInverterStats> getInverterStatsMap() {
+		return inverterStatsMap;
+	}
+
+	public void setInverterStatsMap(Map<String, ClientInverterStats> inverterStatsMap) {
+		this.inverterStatsMap = inverterStatsMap;
+	}
 
 	@Override
 	public String toString() {

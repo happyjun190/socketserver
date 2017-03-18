@@ -4,7 +4,8 @@ import com.socketserver.thrack.model.device.TabDtuDevice;
 import org.apache.ibatis.annotations.Param;
 
 /**
- * Created by ziye on 2017/3/16.
+ * Created by wushenjun on 2017/3/16.
+ * dtu设备DAO
  */
 public interface DtuDeviceDAO {
 

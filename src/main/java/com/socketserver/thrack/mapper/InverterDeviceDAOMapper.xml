@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.socketserver.thrack.dao.InverterDeviceDAO">
+
+    <!--dtu的逆变器表基本信息-->
+    <sql id="inverterDeviceColumns">
+        t1."inverter_id" as inverterId,
+        t1."dtu_id" as dtuId,
+        t1."mtime",
+        t1."status",
+        t1."ctime"
+    </sql>
+
+    <!--通过dtuId 获取dtu下关联的有效设备,并返回inverterId(逆变器地址)-ClientInverterStats的map集合-->
+    <select id="getInverterStatsMap" resultType="com.socketserver.thrack.server.client.ClientInverterStats">
+        SELECT
+          <include refid="inverterDeviceColumns"/>
+        FROM "ts_inverter_device" t1
+        <where>
+            t1."status" = 0
+        and t1."dtu_id" = #{dtuId}
+        </where>
+    </select>
+
+
+</mapper>

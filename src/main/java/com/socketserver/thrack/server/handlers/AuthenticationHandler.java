@@ -2,11 +2,14 @@ package com.socketserver.thrack.server.handlers;
 
 
 import java.io.IOException;
+import java.util.Map;
 
 import com.socketserver.thrack.commons.CodeUtils;
 import com.socketserver.thrack.dao.DtuDeviceDAO;
+import com.socketserver.thrack.dao.InverterDeviceDAO;
 import com.socketserver.thrack.model.device.TabDtuDevice;
 import com.socketserver.thrack.server.client.Client;
+import com.socketserver.thrack.server.client.ClientInverterStats;
 import com.socketserver.thrack.server.client.ClientMap;
 import com.socketserver.thrack.server.client.Constants;
 import io.netty.channel.*;
@@ -47,6 +50,8 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
 	private TokenCacheService tokenCacheService;
 	@Autowired
 	private DtuDeviceDAO dtuDeviceDAO;
+	@Autowired
+	private InverterDeviceDAO inverterDeviceDAO;
 
 
 	@Autowired
@@ -112,7 +117,9 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
 				ctx.close();
 			} else {
 				//验证通过
-				client = new Client(authKey, ctx.channel());
+				//设置dtu客户端的设备信息
+				Map<String, ClientInverterStats> inverterStatsMap = inverterDeviceDAO.getInverterStatsMap(tabDtuDevice.getId());
+				client = new Client(authKey, ctx.channel(), inverterStatsMap);
 				client.touchSession(Client.Status.AUTH);
 				ClientMap.addClient(ctx.channel(), client);
 			}
@@ -131,10 +138,11 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
 
 		//4、crc算法校验
 		if (!CodeUtils.checkCRC((byte[]) msg)) {
-			logger.info("此处为权限认证失败，之前返回，不关闭channel");
+			logger.info("此处为权限认证失败，返回，不关闭channel");
 			return;
 		} else {
 			//5、处理数据
+			logger.info("此处为权限认证成功，下传数据，不关闭channel");
 			ctx.fireChannelRead(msg);
 			return;
 		}
