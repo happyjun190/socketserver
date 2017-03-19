@@ -69,6 +69,7 @@ public final class SecureChatClient {
             //登陆消息
             byte[] message1 = {(byte)0xAA, (byte)0xBB, (byte)0xCC};
             byte[] message2 = {(byte)0x30, (byte)0x30};
+            byte[] message3 = {(byte)0x01, (byte)0x03, (byte)0x01, (byte)0x03, (byte)0x01, (byte)0x03};
 
 
             int index = 0;
@@ -84,10 +85,12 @@ public final class SecureChatClient {
                     break;
                 }
 
-                if(index%2==1) {
+                if(index%3==1) {
                     lastWriteFuture = ch.writeAndFlush(message1);
-                } else {
+                } else if(index%2==3) {
                     lastWriteFuture = ch.writeAndFlush(message2);
+                } else {
+                    lastWriteFuture = ch.writeAndFlush(message3);
                 }
 
                 index++;

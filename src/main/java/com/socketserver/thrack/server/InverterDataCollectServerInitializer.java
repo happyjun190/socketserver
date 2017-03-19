@@ -1,6 +1,7 @@
 package com.socketserver.thrack.server;
 
 import com.socketserver.thrack.server.handlers.HeartBeatHandler;
+import com.socketserver.thrack.server.handlers.InverterDataHandler;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,20 +21,20 @@ import io.netty.handler.timeout.IdleStateHandler;
  * Creates a newly configured {@link ChannelPipeline} for a new channel.
  */
 @Component
-public class SecureChatServerInitializer extends ChannelInitializer<SocketChannel> {
+public class InverterDataCollectServerInitializer extends ChannelInitializer<SocketChannel> {
 
 	@Autowired 
 	private BeanFactory beanFactory; 
 	
 	private final NioEventLoopGroup heartBeatHandlerGroup;
-    private final NioEventLoopGroup serverReceiveDataHandlerGroup;
+    private final NioEventLoopGroup inverterDataHandlerGroup;
     private final NioEventLoopGroup serverSendDataHandlerGroup;
     private final NioEventLoopGroup transmitDeviceDataToWinExeHandlerGroup;
 
-    public SecureChatServerInitializer() throws Exception {
+    public InverterDataCollectServerInitializer() throws Exception {
     	
     	heartBeatHandlerGroup = new NioEventLoopGroup();
-    	serverReceiveDataHandlerGroup = new NioEventLoopGroup();
+        inverterDataHandlerGroup = new NioEventLoopGroup();
     	serverSendDataHandlerGroup = new NioEventLoopGroup();
     	transmitDeviceDataToWinExeHandlerGroup = new NioEventLoopGroup();
     }
@@ -57,6 +58,7 @@ public class SecureChatServerInitializer extends ChannelInitializer<SocketChanne
         // 以下handlers包含阻塞操作，使用独立的eventGroup处理
         // use factory to get new beans
         pipeline.addLast(heartBeatHandlerGroup, beanFactory.getBean(HeartBeatHandler.class));
+        pipeline.addLast(inverterDataHandlerGroup, beanFactory.getBean(InverterDataHandler.class));
 
         // 以下handlers包含阻塞操作，使用独立的eventGroup处理
         // use factory to get new beans

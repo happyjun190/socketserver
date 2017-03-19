@@ -44,13 +44,14 @@ public class InverterDataHandler extends ChannelInboundHandlerAdapter {
         //逆变器地址
         String inverterDeviceAddr = this.getInverterDeviceAddr(message);
         //逆变器信息
-        ClientInverterStats clientInverterStats = inverterStatsMap.get(inverterDeviceAddr);
+        ClientInverterStats clientInverterStats = inverterStatsMap==null?null:inverterStatsMap.get(inverterDeviceAddr);
         if(inverterStatsMap==null||inverterStatsMap.isEmpty()||clientInverterStats==null) {//null and empty判断
-            logger.info("dtu逆变器设备不存在,请于管理后台配置逆变器设备信息并重启设备！");
+            logger.info("dtu逆变器设备: {} 不存在,请于管理后台配置逆变器设备信息并重启设备！", client);
             return;
         }
 
         //数据处理
+        String readAddress = clientInverterStats.getReadAddress();
 
 
     }

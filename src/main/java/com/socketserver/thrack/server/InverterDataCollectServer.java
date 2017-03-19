@@ -13,7 +13,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SecureChatServer {
+public class InverterDataCollectServer {
 	
 	static final int PORT = 8992;
 	
@@ -21,7 +21,7 @@ public class SecureChatServer {
 //	private ApnsPushService apnsPushService;
 	
 	@Autowired
-	private SecureChatServerInitializer serverInitializer;
+	private InverterDataCollectServerInitializer serverInitializer;
 	
 	private void start(String[] args) throws Exception {
 
@@ -52,7 +52,7 @@ public class SecureChatServer {
 	public static void main(String[] args) throws Exception {
 
 		ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
-		SecureChatServer server = context.getBean(SecureChatServer.class);
+		InverterDataCollectServer server = context.getBean(InverterDataCollectServer.class);
 		server.start(args);
 		
 		context.close();

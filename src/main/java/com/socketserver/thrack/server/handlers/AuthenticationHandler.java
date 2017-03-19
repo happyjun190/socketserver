@@ -137,7 +137,9 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
 		}
 
 		//4、crc算法校验
-		if (!CodeUtils.checkCRC((byte[]) msg)) {
+		//TODO 需要修改if判断，现在测试不用crc16算法
+		//if (!CodeUtils.checkCRC((byte[]) msg)) {
+		if (CodeUtils.checkCRC((byte[]) msg)) {
 			logger.info("此处为权限认证失败，返回，不关闭channel");
 			return;
 		} else {
