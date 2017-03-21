@@ -5,6 +5,7 @@ package com.socketserver.thrack.server.client;
  * dtu客户端下的逆变器状态信息
  */
 public class ClientInverterStats {
+    private String dtuId;           //dtu设备id
     private String inverterId;      //逆变器地址
     private int lastSendTime;       //上次发送时间(second),时间戳
     private int sendStatus;         //发送状态(0未发送 1已发送(当发送request收到response请求后,将该状态置0))
@@ -42,11 +43,19 @@ public class ClientInverterStats {
         this.readAddress = readAddress;
     }
 
+    public String getDtuId() {
+        return dtuId;
+    }
+
+    public void setDtuId(String dtuId) {
+        this.dtuId = dtuId;
+    }
 
     @Override
     public String toString() {
         return "ClientInverterStats{" +
-                "inverterId='" + inverterId + '\'' +
+                "dtuId='" + dtuId + '\'' +
+                ", inverterId='" + inverterId + '\'' +
                 ", lastSendTime=" + lastSendTime +
                 ", sendStatus=" + sendStatus +
                 ", readAddress='" + readAddress + '\'' +

@@ -6,10 +6,12 @@ import com.socketserver.thrack.server.client.Client;
 import com.socketserver.thrack.server.client.ClientInverterStats;
 import com.socketserver.thrack.server.client.ClientMap;
 import com.socketserver.thrack.server.client.Constants;
+import com.socketserver.thrack.service.IDataDealService;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -25,6 +27,9 @@ import java.util.Map;
 public class InverterDataHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(HeartBeatHandler.class);
+
+    @Autowired
+    private IDataDealService dataDealService;
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
@@ -62,24 +67,39 @@ public class InverterDataHandler extends ChannelInboundHandlerAdapter {
 
         switch (readAddress) {
             case Constants.ADDR_1600:
+                dataDealService.dataDealOfAddr1600(message, clientInverterStats);
                 break;
             case Constants.ADDR_1616:
+                dataDealService.dataDealOfAddr1616(message, clientInverterStats);
                 break;
             case Constants.ADDR_1652:
+                dataDealService.dataDealOfAddr1652(message, clientInverterStats);
                 break;
             case Constants.ADDR_1670:
+                dataDealService.dataDealOfAddr1670(message, clientInverterStats);
                 break;
             case Constants.ADDR_168E:
+                dataDealService.dataDealOfAddr168E(message, clientInverterStats);
                 break;
             case Constants.ADDR_1690:
+                dataDealService.dataDealOfAddr1690(message, clientInverterStats);
                 break;
             case Constants.ADDR_1800:
+                dataDealService.dataDealOfAddr1800(message, clientInverterStats);
                 break;
             default:
                 break;
         }
 
+        try {
+            Thread.sleep(30000);
+            //TODO
+            ctx.writeAndFlush(new byte[]{0, 0, 0, 0});
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
+        //service处理完成后再重置逆变器信息，如sendStatus、readAddress
     }
 
 
