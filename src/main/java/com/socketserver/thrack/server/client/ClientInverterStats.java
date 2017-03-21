@@ -5,10 +5,10 @@ package com.socketserver.thrack.server.client;
  * dtu客户端下的逆变器状态信息
  */
 public class ClientInverterStats {
-    private String inverterId;//逆变器地址
-    private int lastSendTime;//上次发送时间(second),时间戳
-    private int sendStatus;//发送状态(0未发送 1已发送(当发送request收到response请求后,将该状态置0))
-    private String readAddress;//读取逆变器的地址
+    private String inverterId;      //逆变器地址
+    private int lastSendTime;       //上次发送时间(second),时间戳
+    private int sendStatus;         //发送状态(0未发送 1已发送(当发送request收到response请求后,将该状态置0))
+    private String readAddress;     //读取逆变器的地址
 
     public String getInverterId() {
         return inverterId;

@@ -1,6 +1,7 @@
 package com.socketserver.thrack.server.handlers;
 
 import com.socketserver.thrack.commons.CodeUtils;
+import com.socketserver.thrack.commons.StringUtil;
 import com.socketserver.thrack.server.client.Client;
 import com.socketserver.thrack.server.client.ClientInverterStats;
 import com.socketserver.thrack.server.client.ClientMap;
@@ -52,6 +53,31 @@ public class InverterDataHandler extends ChannelInboundHandlerAdapter {
 
         //数据处理
         String readAddress = clientInverterStats.getReadAddress();
+
+        if(StringUtil.isBlank(readAddress)) {
+            return;
+        }
+
+        logger.info("now deal with the data with the startaddress : {} ", readAddress);
+
+        switch (readAddress) {
+            case Constants.ADDR_1600:
+                break;
+            case Constants.ADDR_1616:
+                break;
+            case Constants.ADDR_1652:
+                break;
+            case Constants.ADDR_1670:
+                break;
+            case Constants.ADDR_168E:
+                break;
+            case Constants.ADDR_1690:
+                break;
+            case Constants.ADDR_1800:
+                break;
+            default:
+                break;
+        }
 
 
     }

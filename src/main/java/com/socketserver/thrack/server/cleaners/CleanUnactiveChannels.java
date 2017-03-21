@@ -1,17 +1,10 @@
 package com.socketserver.thrack.server.cleaners;
 
-import java.util.Map.Entry;
-import java.util.Set;
-
 import com.socketserver.thrack.server.client.ClientMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.socketserver.thrack.commons.SocketServerConstants;
-import com.socketserver.thrack.server.handlers.AuthenticationHandler.ChannelStatus;
-import com.socketserver.thrack.server.handlers.Commons;
-
-import io.netty.channel.Channel;
 
 /**
  * 已经使用read_idle代替
@@ -31,8 +24,6 @@ public class CleanUnactiveChannels implements Runnable {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
-		//Set<Entry<Channel, ChannelStatus>> channelStatusEntries = Commons.channelStatusMap.entrySet();
 		
 		while(true) {
 			try {
