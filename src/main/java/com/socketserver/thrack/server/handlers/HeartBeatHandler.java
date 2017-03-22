@@ -39,7 +39,7 @@ public class HeartBeatHandler extends ChannelInboundHandlerAdapter {
                 if (client.isTimeout())
                 {
                     logger.info("client timeout, disconnect it");
-                    ctx.close();
+                    Commons.removeCloseChannel(ctx.channel());
                 }
                 client.touchSession(Client.Status.ACTIVE);
                 ctx.flush();
