@@ -25,7 +25,8 @@ public class DataDealService implements IDataDealService {
     public void dataDealOfAddr1600(byte[] message, ClientInverterStats clientInverterStats) {
         byte[] dataBytes = this.getDataBytes(message);
         //峰值功率 KW
-        byte[] peakPowerBytes = {dataBytes[0], dataBytes[1], dataBytes[2], dataBytes[3]};
+        //byte[] peakPowerBytes = {dataBytes[0], dataBytes[1], dataBytes[2], dataBytes[3]};
+        byte[] peakPowerBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 0, 4);
         BigDecimal peakPower = DataTransformUtils.tranfrom4ByteAndMulToUnsignedRealValue(peakPowerBytes, 1000);
         //BigDecimal peakPower =
     }
