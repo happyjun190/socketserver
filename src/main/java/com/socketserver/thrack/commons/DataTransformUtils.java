@@ -49,10 +49,11 @@ public class DataTransformUtils {
      */
     public static BigDecimal tranfrom2ByteAndMulToSignedRealValue(byte[] orginBytes, int multiple) {
         int realHighByteToNum = (int) orginBytes[0];
+        int realLowByteToNum = (int) orginBytes[1];
         BigDecimal highByteToNum = new BigDecimal(orginBytes[0] & 0x000000FF);
         BigDecimal lowByteToNum = new BigDecimal(orginBytes[1] & 0x000000FF);
         BigDecimal boost = highByteToNum.multiply(new BigDecimal(Math.pow(16d, 2d))).add(lowByteToNum);
-        if(realHighByteToNum>=0) {
+        if(realHighByteToNum>=0&&realLowByteToNum>=0) {
             return boost.divide(new BigDecimal(multiple));
         } else {
             return new BigDecimal(0).subtract(boost.divide(new BigDecimal(multiple)));
@@ -67,15 +68,21 @@ public class DataTransformUtils {
      * @return
      */
     public static BigDecimal tranfrom4ByteAndMulToUnsignedRealValue(byte[] orginBytes, int multiple) {
-        BigDecimal firstByteToNum = new BigDecimal( orginBytes[0] & 0x000000FF);
-        BigDecimal secondByteToNum = new BigDecimal(orginBytes[0] & 0x000000FF);
-        BigDecimal thirdByteToNum = new BigDecimal(orginBytes[0] & 0x000000FF);
-        BigDecimal fourthByteToNum = new BigDecimal(orginBytes[1] & 0x000000FF);
+        /*BigDecimal firstByteToNum = new BigDecimal( orginBytes[0] & 0x000000FF);
+        BigDecimal secondByteToNum = new BigDecimal(orginBytes[1] & 0x000000FF);
+        BigDecimal thirdByteToNum = new BigDecimal(orginBytes[2] & 0x000000FF);
+        BigDecimal fourthByteToNum = new BigDecimal(orginBytes[3] & 0x000000FF);
         BigDecimal boost = firstByteToNum.multiply(new BigDecimal(Math.pow(16d, 6d)))
                                          .add(secondByteToNum.multiply(new BigDecimal(Math.pow(16d, 4d))))
                                          .add(thirdByteToNum.multiply(new BigDecimal(Math.pow(16d, 2d))))
                                          .add(fourthByteToNum.multiply(new BigDecimal(Math.pow(16d, 0d))));
+        return boost.divide(new BigDecimal(multiple));*/
+
+        BigDecimal high2BytesValue = tranfrom2ByteAndMulToUnsignedRealValue(new byte[]{orginBytes[0], orginBytes[1]}, 1);
+        BigDecimal low2BytesValue = tranfrom2ByteAndMulToUnsignedRealValue(new byte[]{orginBytes[2], orginBytes[3]}, 1);
+        BigDecimal boost = high2BytesValue.multiply(new BigDecimal(Math.pow(16d, 4d))).add(low2BytesValue);
         return boost.divide(new BigDecimal(multiple));
+
     }
 
 
@@ -86,7 +93,19 @@ public class DataTransformUtils {
      * @return
      */
     public static BigDecimal tranfrom4ByteAndMulToSignedRealValue(byte[] orginBytes, int multiple) {
-        int realHighByteToNum = (int) orginBytes[0];
+        BigDecimal high2BytesValue = tranfrom2ByteAndMulToSignedRealValue(new byte[]{orginBytes[0], orginBytes[1]}, 1);
+        BigDecimal low2BytesValue = tranfrom2ByteAndMulToSignedRealValue(new byte[]{orginBytes[2], orginBytes[3]}, 1);
+
+        BigDecimal boost = null;
+        //high2BytesValue <0 或者 (high2BytesValue=0 and low2BytesValue<0 )
+        if((high2BytesValue.compareTo(new BigDecimal("0"))==-1)||
+                (high2BytesValue.compareTo(new BigDecimal("0"))==0)&&low2BytesValue.compareTo(new BigDecimal("0"))==-1 ) {
+            boost = new BigDecimal(0).subtract(high2BytesValue.abs().multiply(new BigDecimal(Math.pow(16d, 4d))).add(low2BytesValue.abs()));
+        } else {
+            boost = high2BytesValue.abs().multiply(new BigDecimal(Math.pow(16d, 4d))).add(low2BytesValue.abs());
+        }
+        return boost.divide(new BigDecimal(multiple));
+        /*int realHighByteToNum = (int) orginBytes[0];
         BigDecimal firstByteToNum = new BigDecimal( orginBytes[0] & 0x000000FF);
         BigDecimal secondByteToNum = new BigDecimal(orginBytes[0] & 0x000000FF);
         BigDecimal thirdByteToNum = new BigDecimal(orginBytes[0] & 0x000000FF);
@@ -99,7 +118,7 @@ public class DataTransformUtils {
             return boost.divide(new BigDecimal(multiple));
         } else {
             return new BigDecimal(0).subtract(boost.divide(new BigDecimal(multiple)));
-        }
+        }*/
     }
 
 
@@ -110,7 +129,7 @@ public class DataTransformUtils {
         System.out.println(tranfrom2ByteAndMulToSignedRealValue(new byte[]{(byte) 0xFF, (byte) 0xFF}, 10));
         System.out.println(tranfrom4ByteAndMulToUnsignedRealValue(new byte[]{(byte) 0xFF, (byte) 0xFF,(byte) 0xFF, (byte) 0xFF}, 1));
         System.out.println(tranfrom4ByteAndMulToSignedRealValue(new byte[]{(byte) 0xFF, (byte) 0xFF,(byte) 0xFF, (byte) 0xFF}, 10));
-        System.out.println(new BigDecimal(4294967295d).divide(new BigDecimal(3600d)).divide(new BigDecimal(24d)).divide(new BigDecimal(365d)));
+        //System.out.println(new BigDecimal(4294967295d).divide(new BigDecimal(3600d)).divide(new BigDecimal(24d)).divide(new BigDecimal(365d)));
     }
 
 }
