@@ -63,7 +63,7 @@ public class InverterDataHandler extends ChannelInboundHandlerAdapter {
             return;
         }
 
-        //TODO 后续使用java反射机制执行方法(可能需要结合java8的新特性),结合spring
+        //TODO 后续可能需要使用java反射机制执行方法(并结合java8的新特性),还需结合spring
         logger.info("now deal with the data with the startaddress : {} ", readAddress);
 
         switch (readAddress) {
