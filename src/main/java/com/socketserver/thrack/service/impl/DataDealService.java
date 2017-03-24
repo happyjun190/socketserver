@@ -88,12 +88,111 @@ public class DataDealService implements IDataDealService {
     @Override
     public void dataDealOfAddr168E(byte[] message, ClientInverterStats clientInverterStats) {
         byte[] dataBytes = this.getDataBytes(message);
+        //无功功率(VA)，逆变器发出无功时为负，吸收无功时为正
+        byte[] reactivePowerBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 0, 4);
+        BigDecimal reactivePower = DataTransformUtils.tranfrom4ByteAndMulToSignedRealValue(reactivePowerBytes, 1000);
+        logger.info("当前无功功率reactivePower:{}", reactivePower);
     }
 
     @Transactional
     @Override
     public void dataDealOfAddr1690(byte[] message, ClientInverterStats clientInverterStats) {
         byte[] dataBytes = this.getDataBytes(message);
+
+        //PV1电压
+        byte[] pv1VoltageBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 0, 2);
+        BigDecimal pv1Voltage = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(pv1VoltageBytes, 10);
+        //PV1电流
+        byte[] pv1ElectricCurrentBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 2, 2);
+        BigDecimal pv1ElectricCurrent = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(pv1ElectricCurrentBytes, 10);
+        //PV2电压
+        byte[] pv2VoltageBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 4, 2);
+        BigDecimal pv2Voltage = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(pv2VoltageBytes, 10);
+        //PV2电流
+        byte[] pv2ElectricCurrentBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 6, 2);
+        BigDecimal pv2ElectricCurrent = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(pv2ElectricCurrentBytes, 10);
+        //PV3电压
+        byte[] pv3VoltageBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 8, 2);
+        BigDecimal pv3Voltage = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(pv3VoltageBytes, 10);
+        //PV3电流
+        byte[] pv3ElectricCurrentBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 10, 2);
+        BigDecimal pv3ElectricCurrent = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(pv3ElectricCurrentBytes, 10);
+        //PV4电压
+        byte[] pv4VoltageBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 12, 2);
+        BigDecimal pv4Voltage = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(pv4VoltageBytes, 10);
+        //PV4电流
+        byte[] pv4ElectricCurrentBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 14, 2);
+        BigDecimal pv4ElectricCurrent = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(pv4ElectricCurrentBytes, 10);
+
+        logger.info("PV1~PV4电压分别为:{},{},{},{}", pv1Voltage, pv2Voltage, pv3Voltage, pv4Voltage);
+        logger.info("PV1~PV4电流分别为:{},{},{},{}", pv1ElectricCurrent, pv2ElectricCurrent, pv3ElectricCurrent, pv4ElectricCurrent);
+
+        //U相电压
+        byte[] uPhaseVoltageBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 16, 2);
+        BigDecimal uPhaseVoltage = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(uPhaseVoltageBytes, 10);
+        //U相电流
+        byte[] uPhaseElectricCurrentBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 18, 2);
+        BigDecimal uPhaseElectricCurrent = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(uPhaseElectricCurrentBytes, 10);
+        //V相电压
+        byte[] vPhaseVoltageBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 20, 2);
+        BigDecimal vPhaseVoltage = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(vPhaseVoltageBytes, 10);
+        //V相电流
+        byte[] vPhaseElectricCurrentBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 22, 2);
+        BigDecimal vPhaseElectricCurrent = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(vPhaseElectricCurrentBytes, 10);
+        //W相电压
+        byte[] wPhaseVoltageBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 24, 2);
+        BigDecimal wPhaseVoltage = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(wPhaseVoltageBytes, 10);
+        //W相电流
+        byte[] wPhaseElectricCurrentBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 26, 2);
+        BigDecimal wPhaseElectricCurrent = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(wPhaseElectricCurrentBytes, 10);
+
+        //BUS电压
+        byte[] busVoltageBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 28, 2);
+        BigDecimal busVoltage = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(busVoltageBytes, 10);
+        //BUS电流
+        byte[] busElectricCurrentBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 30, 2);
+        BigDecimal busElectricCurrent = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(busElectricCurrentBytes, 10);
+
+        logger.info("U、V、W相电压及BUS电压分别为:{},{},{},{}",uPhaseVoltage, vPhaseVoltage, wPhaseVoltage, busVoltage);
+        logger.info("U、V、W相电流及BUS电流分别为:{},{},{},{}",uPhaseElectricCurrent, vPhaseElectricCurrent, wPhaseElectricCurrent, busElectricCurrent);
+
+        //电网频率
+        byte[] gridFrequencyBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 32, 2);
+        BigDecimal gridFrequency = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(gridFrequencyBytes, 100);
+        //功率因数(有符号)
+        byte[] powerFactorBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 34, 2);
+        BigDecimal powerFactor = DataTransformUtils.tranfrom2ByteAndMulToSignedRealValue(powerFactorBytes, 1000);
+        //输入功率(KW)
+        byte[] inputPowerBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 36, 4);
+        BigDecimal inputPower = DataTransformUtils.tranfrom4ByteAndMulToUnsignedRealValue(inputPowerBytes, 1000);
+        //输出功率(KW)
+        byte[] outputPowerBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 40, 4);
+        BigDecimal outputPower = DataTransformUtils.tranfrom4ByteAndMulToUnsignedRealValue(outputPowerBytes, 1000);
+
+        logger.info("电网频率、功率因数(有符号)、输入功率(KW)及输出功率(KW)分别为:{},{},{},{}",gridFrequency, powerFactor, inputPower, outputPower);
+
+        //温度1(℃)
+        byte[] temperature1Bytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 44, 2);
+        BigDecimal temperature1 = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(temperature1Bytes, 100);
+        //温度2(℃)
+        byte[] temperature2Bytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 46, 2);
+        BigDecimal temperature2 = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(temperature2Bytes, 100);
+        //温度3(℃)
+        byte[] temperature3Bytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 48, 2);
+        BigDecimal temperature3 = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(temperature3Bytes, 100);
+
+        logger.info("温度1(℃)、温度2(℃)、温度3(℃)分别为:{},{},{}",temperature1, temperature2, temperature3);
+
+        //接地电阻(M)
+        byte[] groundingResistanceBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 58, 2);
+        BigDecimal groundingResistance = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(groundingResistanceBytes, 100);
+        //漏电流(mA)
+        byte[] leakageCurrentBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 60, 2);
+        BigDecimal leakageCurrent = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(leakageCurrentBytes, 100);
+        //直流分量(mA) 0~65535，对应0~65535mA
+        byte[] dcComponentBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 62, 2);
+        BigDecimal dcComponent = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(dcComponentBytes, 1);
+        logger.info("接地电阻(M)、漏电流(mA)、直流分量(mA)分别为:{},{},{}",groundingResistance, leakageCurrent, dcComponent);
     }
 
     @Transactional
