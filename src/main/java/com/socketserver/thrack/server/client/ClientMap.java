@@ -2,33 +2,55 @@ package com.socketserver.thrack.server.client;
 
 import io.netty.channel.Channel;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ClientMap
 {
-	private static final ConcurrentHashMap<Channel, Client> mapCha = new ConcurrentHashMap<>();
+	public static final ConcurrentHashMap<Channel, Client> mapChannel = new ConcurrentHashMap<>();
 	public static final ConcurrentHashMap<String, Client> mapKey = new ConcurrentHashMap<>();
 
 	public synchronized static void addClient(Channel channel, Client client)
 	{
-		if (channel == null || client == null)
+		if (channel == null || client == null) {
 			return;
+		}
 
 		String authKey = client.getAuthKey();
 		Client old = mapKey.get(authKey);
 		if (old != null)
 		{
 			mapKey.remove(authKey);
-			mapCha.remove(old.getChannel());
+			mapChannel.remove(old.getChannel());
 		}
 
 		mapKey.put(authKey, client);
-		mapCha.put(channel, client);
+		mapChannel.put(channel, client);
+	}
+
+	/**
+	 * 刷新client中逆变器的数据请求状态等信息
+	 * @param channel
+	 * @param clientInverterStats
+	 */
+	public synchronized static void refreshClientInverterStats(Channel channel, ClientInverterStats clientInverterStats) {
+		if (channel == null || clientInverterStats == null) {
+			return;
+		}
+		Client client = mapChannel.get(channel);
+		Map<String, ClientInverterStats> inverterStatsMap = client.getInverterStatsMap();
+		if(inverterStatsMap==null) {
+			inverterStatsMap = new HashMap<>();
+		}
+		inverterStatsMap.put(clientInverterStats.getInverterId(), clientInverterStats);
+		client.setInverterStatsMap(inverterStatsMap);
+		mapChannel.put(channel, client);
 	}
 
 	public static Client getClient(Channel channel)
 	{
-		return mapCha.get(channel);
+		return mapChannel.get(channel);
 	}
 
 	public static Client getClient(String authKey)
@@ -38,11 +60,11 @@ public class ClientMap
 
 	public synchronized static void removeClient(Channel channel)
 	{
-		Client client = mapCha.get(channel);
+		Client client = mapChannel.get(channel);
 		if (client != null)
 		{
 			mapKey.remove(client.getAuthKey());
-			mapCha.remove(channel);
+			mapChannel.remove(channel);
 		}
 	}
 
@@ -51,7 +73,7 @@ public class ClientMap
 		Client client = mapKey.get(authKey);
 		if (client != null)
 		{
-			mapCha.remove(client.getChannel());
+			mapChannel.remove(client.getChannel());
 			mapKey.remove(authKey);
 		}
 	}
