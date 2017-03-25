@@ -9,6 +9,13 @@ public class Constants
 	public static final String HEART_BEAT_MSG = "3030";//心跳消息
 
 
+	// 触发IDLE_STATE_HANDLER时间
+	public static final int READ_IDLE_TIMEOUT_IN_SECONDS = 150;
+
+	public static final int INTEVAL_UNACTIVE_CHANNEL_CLEANING = 10000;//10000毫秒
+
+
+
 	//起始读取地址
 	public static final String ADDR_1600 = "1600";
 	public static final String ADDR_1616 = "1616";

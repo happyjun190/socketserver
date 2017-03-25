@@ -1,16 +1,11 @@
 package com.socketserver.example.securechat;
 
-import com.socketserver.thrack.commons.SocketServerConstants;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.handler.codec.DelimiterBasedFrameDecoder;
-import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
 
 /**
  * Creates a newly configured {@link ChannelPipeline} for a new channel.
@@ -36,7 +31,7 @@ public class SecureChatClientInitializer extends ChannelInitializer<SocketChanne
         //pipeline.addLast(sslCtx.newHandler(ch.alloc(), SecureChatClient.HOST, SecureChatClient.PORT));
 
         // On top of the SSL handler, add the text line codec.
-        /*pipeline.addLast(new DelimiterBasedFrameDecoder(SocketServerConstants.MAX_ACCEPTED_FRAME_LENGTH, Delimiters.lineDelimiter()));
+        /*pipeline.addLast(new DelimiterBasedFrameDecoder(Constants.MAX_ACCEPTED_FRAME_LENGTH, Delimiters.lineDelimiter()));
         pipeline.addLast(new StringDecoder());
         pipeline.addLast(new StringEncoder());*/
 

@@ -1,12 +1,12 @@
 package com.socketserver.thrack.server;
 
+import com.socketserver.thrack.server.client.Constants;
 import com.socketserver.thrack.server.handlers.HeartBeatHandler;
 import com.socketserver.thrack.server.handlers.InverterDataHandler;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.socketserver.thrack.commons.SocketServerConstants;
 import com.socketserver.thrack.server.handlers.AuthenticationHandler;
 
 import io.netty.channel.ChannelInitializer;
@@ -51,7 +51,7 @@ public class InverterDataCollectServerInitializer extends ChannelInitializer<Soc
         
         // and then business logic.
         //1、IDEL+验证数据(CRC16算法)+消息基本处理
-        pipeline.addLast(new IdleStateHandler(SocketServerConstants.READ_IDLE_TIMEOUT_IN_SECONDS,
+        pipeline.addLast(new IdleStateHandler(Constants.READ_IDLE_TIMEOUT_IN_SECONDS,
                                              0,
                                              0),
                                               beanFactory.getBean(AuthenticationHandler.class));

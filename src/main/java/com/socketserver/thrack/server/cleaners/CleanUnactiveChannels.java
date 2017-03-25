@@ -1,10 +1,9 @@
 package com.socketserver.thrack.server.cleaners;
 
 import com.socketserver.thrack.server.client.ClientMap;
+import com.socketserver.thrack.server.client.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.socketserver.thrack.commons.SocketServerConstants;
 
 /**
  * 已经使用read_idle代替
@@ -28,7 +27,7 @@ public class CleanUnactiveChannels implements Runnable {
 		while(true) {
 			try {
 				// 清扫间隔
-				Thread.sleep( SocketServerConstants.INTEVAL_UNACTIVE_CHANNEL_CLEANING );
+				Thread.sleep( Constants.INTEVAL_UNACTIVE_CHANNEL_CLEANING );
 				
 				logger.info("cleaning begins, channels alive: " + ClientMap.mapKey.size());
 
