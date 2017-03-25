@@ -25,6 +25,9 @@ public class Constants
 	public static final String ADDR_1690 = "1690";
 	public static final String ADDR_1800 = "1800";
 
+	//StartAddrAndReadSize中最大的index
+	public static final int MAX_INDEX_OF_ADDRESS = 7;
+
 
 	//16进制 0 1 2 3 4 5 6 7 8 9 A B C D E F
 	//起始地址和读取寄存器个数
