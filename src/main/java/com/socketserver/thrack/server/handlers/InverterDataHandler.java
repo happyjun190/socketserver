@@ -9,6 +9,7 @@ import com.socketserver.thrack.server.client.ClientMap;
 import com.socketserver.thrack.server.client.Constants;
 import com.socketserver.thrack.server.client.Constants.StartAddrAndReadSize;
 import com.socketserver.thrack.service.IDataDealService;
+import com.socketserver.thrack.service.sync.SyncService;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -32,6 +34,8 @@ public class InverterDataHandler extends ChannelInboundHandlerAdapter {
 
     @Autowired
     private IDataDealService dataDealService;
+    @Autowired
+    private SyncService syncService;
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
@@ -94,39 +98,13 @@ public class InverterDataHandler extends ChannelInboundHandlerAdapter {
                 break;
         }
 
-        String reqReadAddress;
-        try {
-            Thread.sleep(30000);
-            int index = StartAddrAndReadSize.getIndexByAddress(readAddress);
-            if(index==Constants.MAX_INDEX_OF_ADDRESS) {//已经是最大的index
-                reqReadAddress = Constants.ADDR_1600;
-            } else {
-                //获取下一个请求地址
-                reqReadAddress = StartAddrAndReadSize.getAddressByIndex(index+1);
-            }
-            byte[] inverterAddress = CodeUtils.hexStringToBytes(inverterDeviceAddr);
-            byte[] readAddressBytes = CodeUtils.hexStringToBytes(reqReadAddress);
-            int requestSize = StartAddrAndReadSize.getSizeByAddress(readAddress);
-            byte[] requestBytes = new byte[]{inverterAddress[0], 0x03, readAddressBytes[0], readAddressBytes[1], 0x00, (byte) requestSize, 0x00, 0x00};
-            byte[] bcrc = CodeUtils.crc16(requestBytes, requestBytes.length-2);//length-2 因为加上了CRC高低位
-            requestBytes[requestBytes.length-2] = bcrc[0];
-            requestBytes[requestBytes.length-1] = bcrc[1];
-            //TODO
-            ctx.writeAndFlush(requestBytes);
-
-            //TODO 需要改变逆变器状态
-            clientInverterStats.setLastSendTime(DateUtils.dateToInt());
-            clientInverterStats.setSendStatus(1);
-            clientInverterStats.setReadAddress(reqReadAddress);
-            //TODO 设置到ClientMap中
-            ClientMap.refreshClientInverterStats(ctx.channel(), clientInverterStats);
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        //异步处理
+        syncService.sendRequsetToInverterDevice(readAddress, inverterDeviceAddr, ctx, clientInverterStats);
 
         //service处理完成后再重置逆变器信息，如sendStatus、readAddress
     }
+
+
 
 
     /**

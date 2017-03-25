@@ -31,9 +31,9 @@ public class ScheduleTaskService {
      * 每5分钟(300秒)执行一次
      */
     //@Scheduled(fixedDelay = 5 * 60 * 1000)
-    @Scheduled(fixedDelay = 5 * 60 * 1000)
+    @Scheduled(fixedDelay = 5 * 1000)
     public void wakingSleptInverterSchedule() {
-        logger.info("开始执行定时任务");
+        logger.info("开始执行定时任务：{}", "wakingSleptInverterSchedule");
         Client client;
         Map<String, ClientInverterStats> inverterStatsMap;
         //遍历所有handler
@@ -102,7 +102,7 @@ public class ScheduleTaskService {
             }
 
             try {
-                Thread.sleep(10);
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

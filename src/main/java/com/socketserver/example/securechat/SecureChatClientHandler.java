@@ -53,15 +53,12 @@ public class SecureChatClientHandler extends ChannelInboundHandlerAdapter {
 			default:
 				break;
 		}
-		if(inverterAddrStr.equals("04")) {
-			byte[] bcrc = CodeUtils.crc16(responseBytes, responseBytes.length-2);//length-2 因为加上了CRC高低位
-			responseBytes[responseBytes.length-2] = bcrc[0];
-			responseBytes[responseBytes.length-1] = bcrc[1];
-			ctx.writeAndFlush(responseBytes);
-			logger.info("客户端发送的消息为：{}， inverterAddrStr：{}", CodeUtils.getHexString(responseBytes), inverterAddrStr);
-		} else {
-			logger.info("客户端不发送消息，inverterAddrStr：{}", inverterAddrStr);
-		}
+		responseBytes[0] = message[0];
+		byte[] bcrc = CodeUtils.crc16(responseBytes, responseBytes.length-2);//length-2 因为加上了CRC高低位
+		responseBytes[responseBytes.length-2] = bcrc[0];
+		responseBytes[responseBytes.length-1] = bcrc[1];
+		ctx.writeAndFlush(responseBytes);
+		logger.info("客户端发送的消息为：{}， inverterAddrStr：{}", CodeUtils.getHexString(responseBytes), inverterAddrStr);
 
 	}
 
