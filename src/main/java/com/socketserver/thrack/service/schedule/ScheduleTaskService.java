@@ -30,6 +30,7 @@ public class ScheduleTaskService {
      * 用于向休眠状态下的逆变器发送请求(处于未请求/未响应状态的逆变器)
      * 每5分钟(300秒)执行一次
      */
+    //@Scheduled(fixedDelay = 5 * 60 * 1000)
     @Scheduled(fixedDelay = 5 * 60 * 1000)
     public void wakingSleptInverterSchedule() {
         logger.info("开始执行定时任务");
@@ -42,7 +43,14 @@ public class ScheduleTaskService {
             if(inverterStatsMap==null||inverterStatsMap.isEmpty()) {
                 logger.info("这个dtu设备下没有任何逆变器设备，client：{}", client);
             } else {
-                sendRequsetToSleptInverter(channel, inverterStatsMap);
+                //验证通过或者是活跃状态
+                if(client.getStatus()==Client.Status.AUTH||client.getStatus()==Client.Status.ACTIVE) {
+                    sendRequsetToSleptInverter(channel, inverterStatsMap);
+                } else {
+                    logger.info("这个dtu设备channel未鉴权通过或处于不活跃状态，client：{}", client);
+
+                }
+
             }
         }
     }
@@ -91,6 +99,12 @@ public class ScheduleTaskService {
                 clientInverterStats.setReadAddress(readAddress);
                 //TODO 设置到ClientMap中
                 ClientMap.refreshClientInverterStats(channel, clientInverterStats);
+            }
+
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }

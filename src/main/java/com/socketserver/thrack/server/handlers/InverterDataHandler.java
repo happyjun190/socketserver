@@ -117,7 +117,7 @@ public class InverterDataHandler extends ChannelInboundHandlerAdapter {
             //TODO 需要改变逆变器状态
             clientInverterStats.setLastSendTime(DateUtils.dateToInt());
             clientInverterStats.setSendStatus(1);
-            clientInverterStats.setReadAddress(readAddress);
+            clientInverterStats.setReadAddress(reqReadAddress);
             //TODO 设置到ClientMap中
             ClientMap.refreshClientInverterStats(ctx.channel(), clientInverterStats);
 
@@ -135,7 +135,7 @@ public class InverterDataHandler extends ChannelInboundHandlerAdapter {
      * @return
      */
     private String getInverterDeviceAddr(byte[] message) {
-        byte[] addrBytes = {message[0], message[1]};
+        byte[] addrBytes = {message[0]};
         return CodeUtils.getHexStringNoBlank(addrBytes);
     }
 

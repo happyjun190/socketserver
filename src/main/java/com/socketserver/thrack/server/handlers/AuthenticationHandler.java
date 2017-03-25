@@ -86,8 +86,6 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void channelRead( ChannelHandlerContext ctx, Object msg ) throws Exception {
-		logger.info("ChannelInboundHandlerAdapter:{}",msg.toString());
-
 		//1、查看是否存在channel,如果存在，则进行第4步骤crc算法校验，如果不存在，查看数据库中是否存在校验串
 		String authKey = CodeUtils.getHexStringNoBlank((byte[]) msg);
 		Client client = ClientMap.getClient(ctx.channel());
@@ -121,13 +119,13 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
 
 		//4、crc算法校验
 		//TODO 需要修改if判断，现在测试不用crc16算法
-		//if (!CodeUtils.checkCRC((byte[]) msg)) {
-		if (CodeUtils.checkCRC((byte[]) msg)) {
-			logger.info("此处为权限认证失败，返回，不关闭channel");
+		if (!CodeUtils.checkCRC((byte[]) msg)) {
+		//if (CodeUtils.checkCRC((byte[]) msg)) {
+			logger.info("此处为CRC认证失败，返回，不关闭channel");
 			return;
 		} else {
 			//5、处理数据
-			logger.info("此处为权限认证成功，下传数据，不关闭channel");
+			logger.info("此处为CRC认证成功，下传数据，不关闭channel");
 			ctx.fireChannelRead(msg);
 			return;
 		}

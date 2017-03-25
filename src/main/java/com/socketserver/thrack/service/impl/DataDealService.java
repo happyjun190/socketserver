@@ -203,7 +203,6 @@ public class DataDealService implements IDataDealService {
 
     //获取数据区数据byte
     private static byte[] getDataBytes(byte[] message) {
-
         int length = message.length;
         byte[] dataBytes = new byte[length-5];
         int index = 0;
