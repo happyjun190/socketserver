@@ -28,15 +28,11 @@ public class InverterDataCollectServerInitializer extends ChannelInitializer<Soc
 	
 	private final NioEventLoopGroup heartBeatHandlerGroup;
     private final NioEventLoopGroup inverterDataHandlerGroup;
-    private final NioEventLoopGroup serverSendDataHandlerGroup;
-    private final NioEventLoopGroup transmitDeviceDataToWinExeHandlerGroup;
 
     public InverterDataCollectServerInitializer() throws Exception {
     	
     	heartBeatHandlerGroup = new NioEventLoopGroup();
         inverterDataHandlerGroup = new NioEventLoopGroup();
-    	serverSendDataHandlerGroup = new NioEventLoopGroup();
-    	transmitDeviceDataToWinExeHandlerGroup = new NioEventLoopGroup();
     }
 
     @Override
