@@ -17,14 +17,14 @@ import org.springframework.stereotype.Service;
 public class SyncService {
 
     /**
-     * 异步处理请求数据
+     * 异步处理请求数据(光伏-英威腾逆变器)
      * @param readAddress
      * @param inverterDeviceAddr
      * @param ctx
      * @param clientInverterStats
      */
     @Async
-    public void sendRequsetToInverterDevice(String readAddress, String inverterDeviceAddr, ChannelHandlerContext ctx, ClientInverterStats clientInverterStats) {
+    public void sendRequsetToInvtInverterDevice(String readAddress, String inverterDeviceAddr, ChannelHandlerContext ctx, ClientInverterStats clientInverterStats) {
         String reqReadAddress;
         try {
             Thread.sleep(30000);
@@ -38,6 +38,7 @@ public class SyncService {
             byte[] inverterAddress = CodeUtils.hexStringToBytes(inverterDeviceAddr);
             byte[] readAddressBytes = CodeUtils.hexStringToBytes(reqReadAddress);
             int requestSize = Constants.StartAddrAndReadSize.getSizeByAddress(readAddress);
+            //读数据
             byte[] requestBytes = new byte[]{inverterAddress[0], 0x03, readAddressBytes[0], readAddressBytes[1], 0x00, (byte) requestSize, 0x00, 0x00};
             byte[] bcrc = CodeUtils.crc16(requestBytes, requestBytes.length-2);//length-2 因为加上了CRC高低位
             requestBytes[requestBytes.length-2] = bcrc[0];

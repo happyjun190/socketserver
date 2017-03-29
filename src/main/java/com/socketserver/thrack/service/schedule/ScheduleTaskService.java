@@ -27,13 +27,13 @@ public class ScheduleTaskService {
     private static final Logger logger = LoggerFactory.getLogger(ScheduleTaskService.class);
 
     /**
-     * 用于向休眠状态下的逆变器发送请求(处于未请求/未响应状态的逆变器)
+     * 用于向休眠状态下的(英威腾-光伏)逆变器发送请求(处于未请求/未响应状态的逆变器)
      * 每5分钟(300秒)执行一次
      */
     //@Scheduled(fixedDelay = 5 * 60 * 1000)
     @Scheduled(fixedDelay = 5 * 1000)
-    public void wakingSleptInverterSchedule() {
-        logger.info("开始执行定时任务：{}", "wakingSleptInverterSchedule");
+    public void wakingSleptInvtInverterSchedule() {
+        logger.info("开始执行定时任务：{}", "wakingSleptInvtInverterSchedule");
         Client client;
         Map<String, ClientInverterStats> inverterStatsMap;
         //遍历所有handler
@@ -45,7 +45,7 @@ public class ScheduleTaskService {
             } else {
                 //验证通过或者是活跃状态
                 if(client.getStatus()==Client.Status.AUTH||client.getStatus()==Client.Status.ACTIVE) {
-                    sendRequsetToSleptInverter(channel, inverterStatsMap);
+                    sendRequsetToSleptInvtInverter(channel, inverterStatsMap);
                 } else {
                     logger.info("这个dtu设备channel未鉴权通过或处于不活跃状态，client：{}", client);
 
@@ -57,11 +57,22 @@ public class ScheduleTaskService {
 
 
     /**
-     * 向处于休眠状态的逆变器发送请求
+     * 用于向休眠状态下的(长虹-铁塔)逆变器发送请求(处于未请求/未响应状态的逆变器)
+     * 每5分钟(300秒)执行一次
+     */
+    //@Scheduled(fixedDelay = 5 * 60 * 1000)
+    @Scheduled(fixedDelay = 6 * 1000)
+    public void wakingSleptChanghongnverterSchedule() {
+        logger.info("开始执行定时任务：{}", "wakingSleptChanghongnverterSchedule");
+    }
+
+
+    /**
+     * 向处于休眠状态的(英威腾-光伏)逆变器发送请求
      * @param channel
      * @param inverterStatsMap
      */
-    private void sendRequsetToSleptInverter(Channel channel, Map<String, ClientInverterStats> inverterStatsMap) {
+    private void sendRequsetToSleptInvtInverter(Channel channel, Map<String, ClientInverterStats> inverterStatsMap) {
         ClientInverterStats clientInverterStats;
         String inverterId;
         byte[] inverterAddress;//逆变器地址 byte
@@ -76,9 +87,9 @@ public class ScheduleTaskService {
         for(String key:inverterStatsMap.keySet()) {
             clientInverterStats = inverterStatsMap.get(key);
             timeinterval = nowTimeToInt - clientInverterStats.getLastSendTime();
-            //未发送请求 or 超时未收到相应(超时时间为300秒)
-            if(clientInverterStats.getSendStatus()==ClientInverterStats.SEND_STATUS_0||
-                    (clientInverterStats.getSendStatus()==ClientInverterStats.SEND_STATUS_1&&timeinterval>ClientInverterStats.MAX_RESPONSE_TIME)) {
+            //未发送请求 or 超时未收到相应(超时时间为300秒) //TODO 并且是英威腾-光伏逆变器 inverterType=0
+            if(clientInverterStats.getInverterType()==ClientInverterStats.INVERTER_TYPE_0&&(clientInverterStats.getSendStatus()==ClientInverterStats.SEND_STATUS_0||
+                    (clientInverterStats.getSendStatus()==ClientInverterStats.SEND_STATUS_1&&timeinterval>ClientInverterStats.MAX_RESPONSE_TIME))) {
                 inverterId = clientInverterStats.getInverterId();
                 inverterAddress = CodeUtils.hexStringToBytes(inverterId);
                 readAddress = clientInverterStats.getReadAddress();
@@ -102,11 +113,21 @@ public class ScheduleTaskService {
             }
 
             try {
-                Thread.sleep(50);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+
+    /**
+     * 向处于休眠状态的(英威腾-铁塔)逆变器发送请求
+     * @param channel
+     * @param inverterStatsMap
+     */
+    private void sendRequsetToSleptChangHongInverter(Channel channel, Map<String, ClientInverterStats> inverterStatsMap) {
+
     }
 
 }

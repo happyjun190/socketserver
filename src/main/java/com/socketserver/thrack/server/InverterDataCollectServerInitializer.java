@@ -1,8 +1,9 @@
 package com.socketserver.thrack.server;
 
 import com.socketserver.thrack.server.client.Constants;
+import com.socketserver.thrack.server.handlers.ChangHongInverterDataHandler;
 import com.socketserver.thrack.server.handlers.HeartBeatHandler;
-import com.socketserver.thrack.server.handlers.InverterDataHandler;
+import com.socketserver.thrack.server.handlers.InvtInverterDataHandler;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,12 +28,14 @@ public class InverterDataCollectServerInitializer extends ChannelInitializer<Soc
 	private BeanFactory beanFactory; 
 	
 	private final NioEventLoopGroup heartBeatHandlerGroup;
-    private final NioEventLoopGroup inverterDataHandlerGroup;
+    private final NioEventLoopGroup invtInverterDataHandlerGroup;
+    private final NioEventLoopGroup changHongInverterDataHandlerGroup;
 
     public InverterDataCollectServerInitializer() throws Exception {
     	
     	heartBeatHandlerGroup = new NioEventLoopGroup();
-        inverterDataHandlerGroup = new NioEventLoopGroup();
+        invtInverterDataHandlerGroup = new NioEventLoopGroup();
+        changHongInverterDataHandlerGroup = new NioEventLoopGroup();
     }
 
     @Override
@@ -54,7 +57,8 @@ public class InverterDataCollectServerInitializer extends ChannelInitializer<Soc
         // 以下handlers包含阻塞操作，使用独立的eventGroup处理
         // use factory to get new beans
         pipeline.addLast(heartBeatHandlerGroup, beanFactory.getBean(HeartBeatHandler.class));
-        pipeline.addLast(inverterDataHandlerGroup, beanFactory.getBean(InverterDataHandler.class));
+        pipeline.addLast(invtInverterDataHandlerGroup, beanFactory.getBean(InvtInverterDataHandler.class));
+        pipeline.addLast(changHongInverterDataHandlerGroup, beanFactory.getBean(ChangHongInverterDataHandler.class));
 
         // 以下handlers包含阻塞操作，使用独立的eventGroup处理
         // use factory to get new beans

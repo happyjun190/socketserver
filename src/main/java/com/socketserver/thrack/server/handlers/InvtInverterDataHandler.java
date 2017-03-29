@@ -1,13 +1,11 @@
 package com.socketserver.thrack.server.handlers;
 
 import com.socketserver.thrack.commons.CodeUtils;
-import com.socketserver.thrack.commons.DateUtils;
 import com.socketserver.thrack.commons.StringUtil;
 import com.socketserver.thrack.server.client.Client;
 import com.socketserver.thrack.server.client.ClientInverterStats;
 import com.socketserver.thrack.server.client.ClientMap;
 import com.socketserver.thrack.server.client.Constants;
-import com.socketserver.thrack.server.client.Constants.StartAddrAndReadSize;
 import com.socketserver.thrack.service.IDataDealService;
 import com.socketserver.thrack.service.sync.SyncService;
 import io.netty.channel.ChannelHandlerContext;
@@ -17,20 +15,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 /**
  * Created by wushenjun on 2017/3/17.
- * 逆变器数据处理handler
+ * 光伏(英威腾)逆变器数据处理handler
  */
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class InverterDataHandler extends ChannelInboundHandlerAdapter {
+public class InvtInverterDataHandler extends ChannelInboundHandlerAdapter {
 
-    private static final Logger logger = LoggerFactory.getLogger(HeartBeatHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(InvtInverterDataHandler.class);
 
     @Autowired
     private IDataDealService dataDealService;
@@ -62,49 +59,55 @@ public class InverterDataHandler extends ChannelInboundHandlerAdapter {
             return;
         }
 
-        //数据处理
-        String readAddress = clientInverterStats.getReadAddress();
+        //0英威腾逆变器
+        if(clientInverterStats.getInverterType()==ClientInverterStats.INVERTER_TYPE_0) {
+            //数据处理
+            String readAddress = clientInverterStats.getReadAddress();
 
-        if(StringUtil.isBlank(readAddress)) {
-            return;
+            if(StringUtil.isBlank(readAddress)) {
+                return;
+            }
+
+            //TODO 后续可能需要使用java反射机制执行方法(并结合java8的新特性),还需结合spring
+            logger.info("now deal with the data with the startaddress : {} ", readAddress);
+
+            switch (readAddress) {
+                case Constants.ADDR_1600:
+                    dataDealService.dataDealOfAddr1600(message, clientInverterStats);
+                    break;
+                case Constants.ADDR_1616:
+                    dataDealService.dataDealOfAddr1616(message, clientInverterStats);
+                    break;
+                case Constants.ADDR_1652:
+                    dataDealService.dataDealOfAddr1652(message, clientInverterStats);
+                    break;
+                case Constants.ADDR_1670:
+                    dataDealService.dataDealOfAddr1670(message, clientInverterStats);
+                    break;
+                case Constants.ADDR_168E:
+                    dataDealService.dataDealOfAddr168E(message, clientInverterStats);
+                    break;
+                case Constants.ADDR_1690:
+                    dataDealService.dataDealOfAddr1690(message, clientInverterStats);
+                    break;
+                case Constants.ADDR_1800:
+                    dataDealService.dataDealOfAddr1800(message, clientInverterStats);
+                    break;
+                default:
+                    break;
+            }
+
+            //异步处理
+            syncService.sendRequsetToInvtInverterDevice(readAddress, inverterDeviceAddr, ctx, clientInverterStats);
+
+            //service处理完成后再重置逆变器信息，如sendStatus、readAddress
+        } else {
+            //非英威腾逆变器消息,往下传
+            ctx.fireChannelRead(msg);
         }
 
-        //TODO 后续可能需要使用java反射机制执行方法(并结合java8的新特性),还需结合spring
-        logger.info("now deal with the data with the startaddress : {} ", readAddress);
 
-        switch (readAddress) {
-            case Constants.ADDR_1600:
-                dataDealService.dataDealOfAddr1600(message, clientInverterStats);
-                break;
-            case Constants.ADDR_1616:
-                dataDealService.dataDealOfAddr1616(message, clientInverterStats);
-                break;
-            case Constants.ADDR_1652:
-                dataDealService.dataDealOfAddr1652(message, clientInverterStats);
-                break;
-            case Constants.ADDR_1670:
-                dataDealService.dataDealOfAddr1670(message, clientInverterStats);
-                break;
-            case Constants.ADDR_168E:
-                dataDealService.dataDealOfAddr168E(message, clientInverterStats);
-                break;
-            case Constants.ADDR_1690:
-                dataDealService.dataDealOfAddr1690(message, clientInverterStats);
-                break;
-            case Constants.ADDR_1800:
-                dataDealService.dataDealOfAddr1800(message, clientInverterStats);
-                break;
-            default:
-                break;
-        }
-
-        //异步处理
-        syncService.sendRequsetToInverterDevice(readAddress, inverterDeviceAddr, ctx, clientInverterStats);
-
-        //service处理完成后再重置逆变器信息，如sendStatus、readAddress
     }
-
-
 
 
     /**
@@ -117,16 +120,5 @@ public class InverterDataHandler extends ChannelInboundHandlerAdapter {
         return CodeUtils.getHexStringNoBlank(addrBytes);
     }
 
-
-    /*public  static  void main(String args[]) {
-        for(int i=0; i<10; i++) {
-            try {
-                Thread.sleep(10000);
-                System.out.println(DateUtils.dateToInt());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }*/
 
 }
