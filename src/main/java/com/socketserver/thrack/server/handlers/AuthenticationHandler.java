@@ -125,7 +125,7 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
 			return;
 		} else {
 			//5、处理数据
-			logger.info("此处为CRC认证成功，下传数据，不关闭channel");
+			//logger.info("此处为CRC认证成功，下传数据，不关闭channel");
 			ctx.fireChannelRead(msg);
 			return;
 		}
