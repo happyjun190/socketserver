@@ -33,7 +33,7 @@ public class ScheduleTaskService {
     //@Scheduled(fixedDelay = 5 * 60 * 1000)
     @Scheduled(fixedDelay = 5 * 1000)
     public void wakingSleptInvtInverterSchedule() {
-        logger.info("开始执行定时任务：{}", "wakingSleptInvtInverterSchedule");
+        //logger.info("开始执行定时任务：{}", "wakingSleptInvtInverterSchedule");
         Client client;
         Map<String, ClientInverterStats> inverterStatsMap;
         //遍历所有handler
@@ -63,7 +63,7 @@ public class ScheduleTaskService {
     @Scheduled(fixedDelay = 6 * 1000)
     public void wakingSleptChanghongnverterSchedule() {
 
-        logger.info("开始执行定时任务：{}", "wakingSleptChanghongnverterSchedule");
+        //logger.info("开始执行定时任务：{}", "wakingSleptChanghongnverterSchedule");
         Client client;
         Map<String, ClientInverterStats> inverterStatsMap;
         //遍历所有handler

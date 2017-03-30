@@ -80,6 +80,17 @@ public class InvtInverterDataHandler extends ChannelInboundHandlerAdapter {
             //判断当前消息长度是否符合需要的长度，如果不符合，则抛弃消息
             int messageDataSize = StartAddrAndReadSize.getSizeByAddress(readAddress);
             if((message.length-5)!= messageDataSize) {
+                //如果消息长度与期望长度不一致，则再次请求
+                //异步发送request消息
+                logger.info("如果消息长度与期望长度不一致，则再次请求");
+                ExecutorGroupFactory.getInstance().getAyncReqInvtTaskGroup().schedule(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                sendReqToInvtInverterDevice.sendReqToInvtInverterDevice(readAddress, inverterDeviceAddr, ctx, clientInverterStats);
+                            }
+                        }, 30, TimeUnit.SECONDS
+                );
                 return;
             }
 
