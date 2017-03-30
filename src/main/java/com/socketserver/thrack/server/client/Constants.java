@@ -32,13 +32,13 @@ public class Constants
 	//16进制 0 1 2 3 4 5 6 7 8 9 A B C D E F
 	//起始地址和读取寄存器个数
 	public enum StartAddrAndReadSize{
-		ADDR_1600("1600",  14,  new byte[]{ 0x16,       0x00},  1),		//读取0x1600~0x160D段位14个寄存器数据，共 28byte
-		ADDR_1616("1616",  10,  new byte[]{ 0x16,       0x16},  2),		//读取0x1616~0x161F段位10个寄存器数据，共 20byte
-		ADDR_1652("1652",  10,  new byte[]{ 0x16,       0x52},  3),		//读取0x1652~0x165B段位10个寄存器数据，共 20byte
-		ADDR_1670("1670",  14,  new byte[]{ 0x16,       0x70},  4),		//读取0x1670~0x167D段位14个寄存器数据，共 28byte
-		ADDR_168E("168E",  2 ,  new byte[]{ 0x16, (byte)0x8E},  5),		//读取0x168E~0x168F段位 2个寄存器数据，共  4byte
-		ADDR_1690("1690",  32,  new byte[]{ 0x16, (byte)0x90},  6),		//读取0x1690~0x16AF段位32个寄存器数据，共 64byte
-		ADDR_1800("1800",  80,  new byte[]{ 0x18,       0x00},  7),		//读取0x1800~0x184F段位80个寄存器数据，共160byte
+		ADDR_1600("1600",  14*2,  new byte[]{ 0x16,       0x00},  1),		//读取0x1600~0x160D段位14个寄存器数据，共 28byte
+		ADDR_1616("1616",  10*2,  new byte[]{ 0x16,       0x16},  2),		//读取0x1616~0x161F段位10个寄存器数据，共 20byte
+		ADDR_1652("1652",  10*2,  new byte[]{ 0x16,       0x52},  3),		//读取0x1652~0x165B段位10个寄存器数据，共 20byte
+		ADDR_1670("1670",  14*2,  new byte[]{ 0x16,       0x70},  4),		//读取0x1670~0x167D段位14个寄存器数据，共 28byte
+		ADDR_168E("168E",  2*2 ,  new byte[]{ 0x16, (byte)0x8E},  5),		//读取0x168E~0x168F段位 2个寄存器数据，共  4byte
+		ADDR_1690("1690",  32*2,  new byte[]{ 0x16, (byte)0x90},  6),		//读取0x1690~0x16AF段位32个寄存器数据，共 64byte
+		ADDR_1800("1800",  80*2,  new byte[]{ 0x18,       0x00},  7),		//读取0x1800~0x184F段位80个寄存器数据，共160byte
 		;
 
 		private final String address;

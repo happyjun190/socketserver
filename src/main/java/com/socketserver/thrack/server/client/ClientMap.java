@@ -45,7 +45,7 @@ public class ClientMap
 		if(inverterStatsMap==null) {
 			inverterStatsMap = new HashMap<>();
 		}
-		logger.info("refreshClientInverterStats:{}", clientInverterStats);
+		//logger.info("refreshClientInverterStats:{}", clientInverterStats);
 		inverterStatsMap.put(clientInverterStats.getInverterId(), clientInverterStats);
 		client.setInverterStatsMap(inverterStatsMap);
 		mapChannel.put(channel, client);

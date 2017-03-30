@@ -7,6 +7,7 @@ import com.socketserver.thrack.server.client.Client;
 import com.socketserver.thrack.server.client.ClientInverterStats;
 import com.socketserver.thrack.server.client.ClientMap;
 import com.socketserver.thrack.server.client.Constants;
+import com.socketserver.thrack.server.client.Constants.StartAddrAndReadSize;
 import com.socketserver.thrack.service.IDataDealService;
 import com.socketserver.thrack.service.ISendReqToInverterService;
 import io.netty.channel.ChannelHandlerContext;
@@ -76,8 +77,15 @@ public class InvtInverterDataHandler extends ChannelInboundHandlerAdapter {
             //TODO 后续可能需要使用java反射机制执行方法(并结合java8的新特性),还需结合spring
             logger.info("now deal with the data with the startaddress : {} ", readAddress);
 
+            //判断当前消息长度是否符合需要的长度，如果不符合，则抛弃消息
+            int messageDataSize = StartAddrAndReadSize.getSizeByAddress(readAddress);
+            if((message.length-5)!= messageDataSize) {
+                return;
+            }
+
             switch (readAddress) {
                 case Constants.ADDR_1600:
+
                     dataDealService.dataDealOfAddr1600(message, clientInverterStats);
                     break;
                 case Constants.ADDR_1616:

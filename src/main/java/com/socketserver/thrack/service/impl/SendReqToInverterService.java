@@ -17,36 +17,31 @@ public class SendReqToInverterService implements ISendReqToInverterService {
 
     public void sendReqToInvtInverterDevice(String readAddress, String inverterDeviceAddr, ChannelHandlerContext ctx, ClientInverterStats clientInverterStats) {
         String reqReadAddress;
-        try {
-            Thread.sleep(30000);
-            int index = Constants.StartAddrAndReadSize.getIndexByAddress(readAddress);
-            if(index==Constants.MAX_INDEX_OF_ADDRESS) {//已经是最大的index
-                reqReadAddress = Constants.ADDR_1600;
-            } else {
-                //获取下一个请求地址
-                reqReadAddress = Constants.StartAddrAndReadSize.getAddressByIndex(index+1);
-            }
-            byte[] inverterAddress = CodeUtils.hexStringToBytes(inverterDeviceAddr);
-            byte[] readAddressBytes = CodeUtils.hexStringToBytes(reqReadAddress);
-            int requestSize = Constants.StartAddrAndReadSize.getSizeByAddress(readAddress);
-            //读数据
-            byte[] requestBytes = new byte[]{inverterAddress[0], 0x03, readAddressBytes[0], readAddressBytes[1], 0x00, (byte) requestSize, 0x00, 0x00};
-            byte[] bcrc = CodeUtils.crc16(requestBytes, requestBytes.length-2);//length-2 因为加上了CRC高低位
-            requestBytes[requestBytes.length-2] = bcrc[0];
-            requestBytes[requestBytes.length-1] = bcrc[1];
-            //TODO
-            ctx.writeAndFlush(requestBytes);
-
-            //TODO 需要改变逆变器状态
-            clientInverterStats.setLastSendTime(DateUtils.dateToInt());
-            clientInverterStats.setSendStatus(1);
-            clientInverterStats.setReadAddress(reqReadAddress);
-            //TODO 设置到ClientMap中
-            ClientMap.refreshClientInverterStats(ctx.channel(), clientInverterStats);
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        int index = Constants.StartAddrAndReadSize.getIndexByAddress(readAddress);
+        if(index==Constants.MAX_INDEX_OF_ADDRESS) {//已经是最大的index
+            reqReadAddress = Constants.ADDR_1600;
+        } else {
+            //获取下一个请求地址
+            reqReadAddress = Constants.StartAddrAndReadSize.getAddressByIndex(index+1);
         }
+        byte[] inverterAddress = CodeUtils.hexStringToBytes(inverterDeviceAddr);
+        byte[] readAddressBytes = CodeUtils.hexStringToBytes(reqReadAddress);
+        int requestSize = Constants.StartAddrAndReadSize.getSizeByAddress(readAddress);
+        //读数据
+        byte[] requestBytes = new byte[]{inverterAddress[0], 0x03, readAddressBytes[0], readAddressBytes[1], 0x00, (byte) requestSize, 0x00, 0x00};
+        byte[] bcrc = CodeUtils.crc16(requestBytes, requestBytes.length-2);//length-2 因为加上了CRC高低位
+        requestBytes[requestBytes.length-2] = bcrc[0];
+        requestBytes[requestBytes.length-1] = bcrc[1];
+        //TODO
+        ctx.writeAndFlush(requestBytes);
+
+        //TODO 需要改变逆变器状态
+        clientInverterStats.setLastSendTime(DateUtils.dateToInt());
+        clientInverterStats.setSendStatus(1);
+        clientInverterStats.setReadAddress(reqReadAddress);
+        //TODO 设置到ClientMap中
+        ClientMap.refreshClientInverterStats(ctx.channel(), clientInverterStats);
+
     }
 
 }
