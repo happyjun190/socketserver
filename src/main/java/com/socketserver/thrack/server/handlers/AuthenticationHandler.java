@@ -2,15 +2,18 @@ package com.socketserver.thrack.server.handlers;
 
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import com.socketserver.thrack.commons.CodeUtils;
 import com.socketserver.thrack.dao.DtuDeviceDAO;
 import com.socketserver.thrack.dao.InverterDeviceDAO;
 import com.socketserver.thrack.model.device.TabDtuDevice;
+import com.socketserver.thrack.server.ExecutorGroupFactory;
 import com.socketserver.thrack.server.client.Client;
 import com.socketserver.thrack.server.client.ClientInverterStats;
 import com.socketserver.thrack.server.client.ClientMap;
 import com.socketserver.thrack.server.client.Constants;
+import com.socketserver.thrack.service.ISendReqToInverterService;
 import io.netty.channel.*;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
@@ -39,6 +42,8 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
 	private DtuDeviceDAO dtuDeviceDAO;
 	@Autowired
 	private InverterDeviceDAO inverterDeviceDAO;
+	@Autowired
+	private ISendReqToInverterService sendReqToInvtInverterDevice;
 
 	private static final Logger logger = LoggerFactory.getLogger(AuthenticationHandler.class);
 	
@@ -123,6 +128,7 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
 		//if (CodeUtils.checkCRC((byte[]) msg)) {
 			//TODO 存在粘包问题
 			logger.info("此处为CRC认证失败，消息为:{}", CodeUtils.getHexString((byte[]) msg));
+			this.dealCRCErrorMessage(ctx, (byte[]) msg);
 			return;
 		} else {
 			//5、处理数据
@@ -131,6 +137,48 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
 			return;
 		}
 
+	}
+
+
+	//处理crc算法校验失败，失败时，重新请求
+	void dealCRCErrorMessage(ChannelHandlerContext ctx, byte[] message) {
+
+		if(message.length<=5) {//读响应一般5+2*N, 写响应一般8字节，读写响应出错5字节
+			return;
+		}
+		Client client = ClientMap.getClient(ctx.channel());
+
+		Map<String, ClientInverterStats> inverterStatsMap = client.getInverterStatsMap();
+		//逆变器地址
+		String inverterDeviceAddr = this.getInverterDeviceAddr(message);
+		//逆变器信息
+		ClientInverterStats clientInverterStats = inverterStatsMap==null?null:inverterStatsMap.get(inverterDeviceAddr);
+		if(inverterStatsMap==null||inverterStatsMap.isEmpty()||clientInverterStats==null) {//null and empty判断
+			return;
+		}
+		//数据处理
+		String readAddress = clientInverterStats.getReadAddress();
+
+		//异步发送request消息
+		ExecutorGroupFactory.getInstance().getAyncReqInvtTaskGroup().schedule(
+				new Runnable() {
+					@Override
+					public void run() {
+						sendReqToInvtInverterDevice.sendReqToInvtInverterDevice(readAddress, inverterDeviceAddr, ctx, clientInverterStats);
+					}
+				}, 30, TimeUnit.SECONDS
+		);
+	}
+
+
+	/**
+	 * 获取逆变器地址
+	 * @param message
+	 * @return
+	 */
+	private String getInverterDeviceAddr(byte[] message) {
+		byte[] addrBytes = {message[0]};
+		return CodeUtils.getHexStringNoBlank(addrBytes);
 	}
 
 

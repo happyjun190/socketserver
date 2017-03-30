@@ -9,8 +9,8 @@ public class Constants
 	public static final String HEART_BEAT_MSG = "3030";//心跳消息
 
 
-	// 触发IDLE_STATE_HANDLER时间
-	public static final int READ_IDLE_TIMEOUT_IN_SECONDS = 150;
+	// 触发IDLE_STATE_HANDLER时间 10分钟
+	public static final int READ_IDLE_TIMEOUT_IN_SECONDS = 600;
 
 	public static final int INTEVAL_UNACTIVE_CHANNEL_CLEANING = 10000;//10000毫秒
 

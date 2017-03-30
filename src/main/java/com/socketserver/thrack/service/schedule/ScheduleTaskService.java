@@ -109,6 +109,7 @@ public class ScheduleTaskService {
             //未发送请求 or 超时未收到相应(超时时间为300秒) //TODO 并且是英威腾-光伏逆变器 inverterType=0
             if(clientInverterStats.getInverterType()==ClientInverterStats.INVERTER_TYPE_0&&(clientInverterStats.getSendStatus()==ClientInverterStats.SEND_STATUS_0||
                     (clientInverterStats.getSendStatus()==ClientInverterStats.SEND_STATUS_1&&timeinterval>ClientInverterStats.MAX_RESPONSE_TIME))) {
+                logger.info("inverterType:{}, sendStatus:{}, timeinterval:{}", clientInverterStats.getInverterType(), clientInverterStats.getSendStatus(), timeinterval);
                 inverterId = clientInverterStats.getInverterId();
                 inverterAddress = CodeUtils.hexStringToBytes(inverterId);
                 readAddress = clientInverterStats.getReadAddress();
