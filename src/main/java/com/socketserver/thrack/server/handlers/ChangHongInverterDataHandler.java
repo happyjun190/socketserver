@@ -69,7 +69,7 @@ public class ChangHongInverterDataHandler extends ChannelInboundHandlerAdapter {
 
 
             //异步发送request消息
-            ExecutorGroupFactory.getInstance().getWritingDBTaskGroup().schedule(
+            ExecutorGroupFactory.getInstance().getAyncReqInvtTaskGroup().schedule(
                     new Runnable() {
                         @Override
                         public void run() {

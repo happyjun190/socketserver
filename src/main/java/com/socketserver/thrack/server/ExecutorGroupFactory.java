@@ -17,6 +17,10 @@ public class ExecutorGroupFactory {
     private EventExecutorGroup ayncReqInvtTaskGroup;
     private Object ayncReqInvtTaskGroupLockObject = new Object();
 
+    //异步插入数据group
+    private EventExecutorGroup writingDBTaskGroup;
+    private Object writingDBTaskGroupLockObject = new Object();
+
     private ExecutorGroupFactory() {
     }
 
@@ -30,7 +34,7 @@ public class ExecutorGroupFactory {
         return executorGroupFactory;
     }
 
-    public EventExecutorGroup getWritingDBTaskGroup() {
+    public EventExecutorGroup getAyncReqInvtTaskGroup() {
         if (ayncReqInvtTaskGroup == null) {
             synchronized(ayncReqInvtTaskGroupLockObject) {
                 if (ayncReqInvtTaskGroup == null) {
@@ -40,5 +44,18 @@ public class ExecutorGroupFactory {
         }
         return ayncReqInvtTaskGroup;
     }
+
+
+    public EventExecutorGroup getWritingDBTaskGroup() {
+        if (writingDBTaskGroup == null) {
+            synchronized(writingDBTaskGroupLockObject) {
+                if (writingDBTaskGroup == null) {
+                    writingDBTaskGroup = new DefaultEventExecutorGroup(4);
+                }
+            }
+        }
+        return ayncReqInvtTaskGroup;
+    }
+
 
 }
