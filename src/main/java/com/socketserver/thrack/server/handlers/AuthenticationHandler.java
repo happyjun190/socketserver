@@ -121,6 +121,7 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
 		//TODO 需要修改if判断，现在测试不用crc16算法
 		if (!CodeUtils.checkCRC((byte[]) msg)) {
 		//if (CodeUtils.checkCRC((byte[]) msg)) {
+			//TODO 存在粘包问题
 			logger.info("此处为CRC认证失败，消息为:{}", CodeUtils.getHexString((byte[]) msg));
 			return;
 		} else {
