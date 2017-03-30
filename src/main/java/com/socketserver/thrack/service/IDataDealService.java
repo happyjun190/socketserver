@@ -57,4 +57,12 @@ public interface IDataDealService {
      */
     void dataDealOfAddr1800(byte[] message, ClientInverterStats clientInverterStats);
 
+
+    /**
+     * 长虹逆变器数据处理
+     * @param message
+     * @param clientInverterStats
+     */
+    void dataDealOfChangHongInverter(byte[] message, ClientInverterStats clientInverterStats);
+
 }

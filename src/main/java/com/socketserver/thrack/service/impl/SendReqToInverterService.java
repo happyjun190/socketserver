@@ -1,31 +1,22 @@
-package com.socketserver.thrack.service.sync;
+package com.socketserver.thrack.service.impl;
 
 import com.socketserver.thrack.commons.CodeUtils;
 import com.socketserver.thrack.commons.DateUtils;
 import com.socketserver.thrack.server.client.ClientInverterStats;
 import com.socketserver.thrack.server.client.ClientMap;
 import com.socketserver.thrack.server.client.Constants;
+import com.socketserver.thrack.service.ISendReqToInverterService;
 import io.netty.channel.ChannelHandlerContext;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 /**
- * Created by ziye on 2017/3/26.
- * 异步处理service
+ * Created by wushenjun on 2017/3/30.
  */
 @Service
-public class SyncService {
+public class SendReqToInverterService implements ISendReqToInverterService {
 
-    /**
-     * 异步处理请求数据(光伏-英威腾逆变器)
-     * @param readAddress
-     * @param inverterDeviceAddr
-     * @param ctx
-     * @param clientInverterStats
-     */
-    @Async
-    public void sendRequsetToInvtInverterDevice(String readAddress, String inverterDeviceAddr, ChannelHandlerContext ctx, ClientInverterStats clientInverterStats) {
-        /*String reqReadAddress;
+    public void sendReqToInvtInverterDevice(String readAddress, String inverterDeviceAddr, ChannelHandlerContext ctx, ClientInverterStats clientInverterStats) {
+        String reqReadAddress;
         try {
             Thread.sleep(30000);
             int index = Constants.StartAddrAndReadSize.getIndexByAddress(readAddress);
@@ -55,7 +46,7 @@ public class SyncService {
 
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }*/
+        }
     }
 
 }

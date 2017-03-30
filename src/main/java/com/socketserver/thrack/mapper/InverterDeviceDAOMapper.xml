@@ -9,7 +9,11 @@
         t1."dtu_id" as dtuId,
         t1."mtime",
         t1."status",
-        t1."ctime"
+        t1."ctime",
+        t1."inverter_type" as inverterType,
+        t1."version" as version,
+        t1."phase_type" as phaseType,
+        t1."power_size" as powerSize
     </sql>
 
     <!--通过dtuId 获取dtu下关联的有效设备,并返回inverterId(逆变器地址)-ClientInverterStats的map集合-->

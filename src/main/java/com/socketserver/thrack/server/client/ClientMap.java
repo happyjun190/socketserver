@@ -1,6 +1,9 @@
 package com.socketserver.thrack.server.client;
 
+import com.socketserver.thrack.server.handlers.ChangHongInverterDataHandler;
 import io.netty.channel.Channel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,17 +13,16 @@ public class ClientMap
 {
 	public static final ConcurrentHashMap<Channel, Client> mapChannel = new ConcurrentHashMap<>();
 	public static final ConcurrentHashMap<String, Client> mapKey = new ConcurrentHashMap<>();
+	private static final Logger logger = LoggerFactory.getLogger(ChangHongInverterDataHandler.class);
 
-	public synchronized static void addClient(Channel channel, Client client)
-	{
+	public synchronized static void addClient(Channel channel, Client client) {
 		if (channel == null || client == null) {
 			return;
 		}
 
 		String authKey = client.getAuthKey();
 		Client old = mapKey.get(authKey);
-		if (old != null)
-		{
+		if (old != null) {
 			mapKey.remove(authKey);
 			mapChannel.remove(old.getChannel());
 		}
@@ -43,6 +45,7 @@ public class ClientMap
 		if(inverterStatsMap==null) {
 			inverterStatsMap = new HashMap<>();
 		}
+		logger.info("refreshClientInverterStats:{}", clientInverterStats);
 		inverterStatsMap.put(clientInverterStats.getInverterId(), clientInverterStats);
 		client.setInverterStatsMap(inverterStatsMap);
 		mapChannel.put(channel, client);
@@ -61,8 +64,7 @@ public class ClientMap
 	public synchronized static void removeClient(Channel channel)
 	{
 		Client client = mapChannel.get(channel);
-		if (client != null)
-		{
+		if (client != null) {
 			mapKey.remove(client.getAuthKey());
 			mapChannel.remove(channel);
 		}

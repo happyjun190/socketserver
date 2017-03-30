@@ -1,20 +1,24 @@
 package com.socketserver.thrack.server.handlers;
 
 import com.socketserver.thrack.commons.CodeUtils;
-import com.socketserver.thrack.commons.StringUtil;
+import com.socketserver.thrack.server.ExecutorGroupFactory;
 import com.socketserver.thrack.server.client.Client;
 import com.socketserver.thrack.server.client.ClientInverterStats;
 import com.socketserver.thrack.server.client.ClientMap;
-import com.socketserver.thrack.server.client.Constants;
+import com.socketserver.thrack.service.IDataDealService;
+import com.socketserver.thrack.service.ISendReqToInverterService;
+import com.socketserver.thrack.service.sync.SyncService;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by wushenjun on 2017/3/29.
@@ -25,6 +29,14 @@ import java.util.Map;
 public class ChangHongInverterDataHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(ChangHongInverterDataHandler.class);
+
+
+    @Autowired
+    private ISendReqToInverterService sendReqToInvtInverterDevice;
+    @Autowired
+    private IDataDealService dataDealService;
+    @Autowired
+    private SyncService syncService;
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
@@ -53,9 +65,23 @@ public class ChangHongInverterDataHandler extends ChannelInboundHandlerAdapter {
 
         //1长虹逆变器
         if(clientInverterStats.getInverterType()==ClientInverterStats.INVERTER_TYPE_1) {
+            dataDealService.dataDealOfChangHongInverter(message, clientInverterStats);
 
+
+            //异步发送request消息
+            ExecutorGroupFactory.getInstance().getWritingDBTaskGroup().schedule(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            sendReqToInvtInverterDevice.sendReqToInvtInverterDevice("00", inverterDeviceAddr, ctx, clientInverterStats);
+                        }
+                    }, 30, TimeUnit.SECONDS
+            );
+
+            //异步处理
+            //syncService.sendRequsetToInvtInverterDevice("00", inverterDeviceAddr, ctx, clientInverterStats);
         } else {
-            //非英威腾逆变器消息,往下传
+            //非长虹逆变器消息,往下传
             ctx.fireChannelRead(msg);
         }
 

@@ -201,6 +201,11 @@ public class DataDealService implements IDataDealService {
     }
 
 
+    @Override
+    public void dataDealOfChangHongInverter(byte[] message, ClientInverterStats clientInverterStats) {
+
+    }
+
     //获取数据区数据byte
     private static byte[] getDataBytes(byte[] message) {
         int length = message.length;

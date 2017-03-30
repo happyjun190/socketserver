@@ -2,12 +2,13 @@ package com.socketserver.thrack.server.handlers;
 
 import com.socketserver.thrack.commons.CodeUtils;
 import com.socketserver.thrack.commons.StringUtil;
+import com.socketserver.thrack.server.ExecutorGroupFactory;
 import com.socketserver.thrack.server.client.Client;
 import com.socketserver.thrack.server.client.ClientInverterStats;
 import com.socketserver.thrack.server.client.ClientMap;
 import com.socketserver.thrack.server.client.Constants;
 import com.socketserver.thrack.service.IDataDealService;
-import com.socketserver.thrack.service.sync.SyncService;
+import com.socketserver.thrack.service.ISendReqToInverterService;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by wushenjun on 2017/3/17.
@@ -31,8 +33,11 @@ public class InvtInverterDataHandler extends ChannelInboundHandlerAdapter {
 
     @Autowired
     private IDataDealService dataDealService;
+    //@Autowired
+    //private SyncService syncService;
+
     @Autowired
-    private SyncService syncService;
+    private ISendReqToInverterService sendReqToInvtInverterDevice;
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
@@ -97,8 +102,18 @@ public class InvtInverterDataHandler extends ChannelInboundHandlerAdapter {
                     break;
             }
 
+            //异步发送request消息
+            ExecutorGroupFactory.getInstance().getWritingDBTaskGroup().schedule(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            sendReqToInvtInverterDevice.sendReqToInvtInverterDevice(readAddress, inverterDeviceAddr, ctx, clientInverterStats);
+                        }
+                    }, 30, TimeUnit.SECONDS
+            );
+
             //异步处理
-            syncService.sendRequsetToInvtInverterDevice(readAddress, inverterDeviceAddr, ctx, clientInverterStats);
+            //syncService.sendRequsetToInvtInverterDevice(readAddress, inverterDeviceAddr, ctx, clientInverterStats);
 
             //service处理完成后再重置逆变器信息，如sendStatus、readAddress
         } else {
