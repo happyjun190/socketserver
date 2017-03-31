@@ -57,7 +57,7 @@ public class SendReqToInverterService implements ISendReqToInverterService {
         if(nowTime-channelLastSendTime<Constants.MAX_SEND_TIME_INTERVAL) {
             try {
                 //休息6秒(wait/sleep)
-                nowTime+= 6;
+                nowTime+= Constants.MAX_WAIT_TIME_INTERVAL;
                 Thread.sleep((long)(Constants.MAX_WAIT_TIME_INTERVAL*1000));
             } catch (InterruptedException e) {
                 e.printStackTrace();
