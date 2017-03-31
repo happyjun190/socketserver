@@ -28,6 +28,11 @@ public class Constants
 	//StartAddrAndReadSize中最大的index
 	public static final int MAX_INDEX_OF_ADDRESS = 7;
 
+	//channel 最小发送消息时间差(单位:S)
+	public static final int MAX_SEND_TIME_INTERVAL = 5;
+	//当出现channel为达到最小发送时间差时,sleep(6s)
+	public static final int MAX_WAIT_TIME_INTERVAL = 6;
+
 
 	//16进制 0 1 2 3 4 5 6 7 8 9 A B C D E F
 	//起始地址和读取寄存器个数
