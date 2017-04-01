@@ -35,4 +35,10 @@ public interface InverterDataDAO {
      */
     void insertTodaySummary(TabTodaySummary tabTodaySummary);
 
+    /**
+     * 插入/更新累计统计数据(累计发电量/省钱量/co2减排量)
+     * @param tabTodaySummary
+     */
+    void insertTotalSummary(TabTodaySummary tabTodaySummary);
+
 }

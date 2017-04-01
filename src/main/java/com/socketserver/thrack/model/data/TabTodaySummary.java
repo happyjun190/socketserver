@@ -13,6 +13,9 @@ public class TabTodaySummary {
     private BigDecimal generateCapacity;
     private BigDecimal saveMoney;
     private BigDecimal co2Reduction;
+    private BigDecimal totalGenerateCapacity;
+    private BigDecimal totalSaveMoney;
+    private BigDecimal totalCo2Reduction;
     private String datestring;
     private Date ctime;
     private Date mtime;
@@ -87,5 +90,29 @@ public class TabTodaySummary {
 
     public void setMtime(Date mtime) {
         this.mtime = mtime;
+    }
+
+    public BigDecimal getTotalGenerateCapacity() {
+        return totalGenerateCapacity;
+    }
+
+    public void setTotalGenerateCapacity(BigDecimal totalGenerateCapacity) {
+        this.totalGenerateCapacity = totalGenerateCapacity;
+    }
+
+    public BigDecimal getTotalSaveMoney() {
+        return totalSaveMoney;
+    }
+
+    public void setTotalSaveMoney(BigDecimal totalSaveMoney) {
+        this.totalSaveMoney = totalSaveMoney;
+    }
+
+    public BigDecimal getTotalCo2Reduction() {
+        return totalCo2Reduction;
+    }
+
+    public void setTotalCo2Reduction(BigDecimal totalCo2Reduction) {
+        this.totalCo2Reduction = totalCo2Reduction;
     }
 }

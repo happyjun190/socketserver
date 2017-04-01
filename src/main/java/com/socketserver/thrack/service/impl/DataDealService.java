@@ -118,6 +118,26 @@ public class DataDealService implements IDataDealService {
 
         logger.info("转换累计发电量(KWh)，累计省钱和累计减排CO2(Kg)，totalGeneratingCapacity：{}KWh，totalSaveMoney：{}元，totalCO2EmissionReduction：{}Kg",
                                                                totalGeneratingCapacity, totalSaveMoney, totalCO2EmissionReduction);
+
+        TabTodaySummary tabTodaySummary = new TabTodaySummary();
+        tabTodaySummary.setDtuId(clientInverterStats.getDtuId());
+        tabTodaySummary.setInverterId(clientInverterStats.getInverterId());
+        tabTodaySummary.setTotalCo2Reduction(totalCO2EmissionReduction);
+        tabTodaySummary.setTotalSaveMoney(totalSaveMoney);
+        tabTodaySummary.setTotalGenerateCapacity(totalGeneratingCapacity);
+        //设置日期yyyymmdd
+        tabTodaySummary.setDatestring(DateUtils.getNowTime(DateUtils.DATE_DAY_STR));
+
+        //使用线程处理-累计统计数据入库(已解析)
+        ExecutorGroupFactory.getInstance().getWritingDBTaskGroup().schedule(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        inverterDataDAO.insertTotalSummary(tabTodaySummary);
+                    }
+                }, 1, TimeUnit.MICROSECONDS
+        );
+
     }
 
     @Transactional
