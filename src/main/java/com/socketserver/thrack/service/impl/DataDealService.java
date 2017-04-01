@@ -1,14 +1,21 @@
 package com.socketserver.thrack.service.impl;
 
 import com.socketserver.thrack.commons.DataTransformUtils;
+import com.socketserver.thrack.commons.DateUtils;
+import com.socketserver.thrack.dao.InverterDataDAO;
+import com.socketserver.thrack.model.data.TabPeakPowerData;
+import com.socketserver.thrack.model.data.TabTodaySummary;
+import com.socketserver.thrack.server.ExecutorGroupFactory;
 import com.socketserver.thrack.server.client.ClientInverterStats;
 import com.socketserver.thrack.service.IDataDealService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by ziye on 2017/3/21.
@@ -17,6 +24,9 @@ import java.math.BigDecimal;
 public class DataDealService implements IDataDealService {
 
     private static final Logger logger = LoggerFactory.getLogger(DataDealService.class);
+
+    @Autowired
+    private InverterDataDAO inverterDataDAO;
 
 
     @Transactional
@@ -33,7 +43,21 @@ public class DataDealService implements IDataDealService {
 
         logger.info("转换今日峰值功率和历史峰值功率，todayPeakPower：{}KW，historyPeakPower：{}KW", todayPeakPower, historyPeakPower);
 
-        //BigDecimal peakPower =
+        TabPeakPowerData tabPeakPowerData = new TabPeakPowerData();
+        tabPeakPowerData.setHistoryPeakPower(historyPeakPower);
+        tabPeakPowerData.setTodayPeakPower(todayPeakPower);
+        tabPeakPowerData.setDtuId(clientInverterStats.getDtuId());
+        tabPeakPowerData.setInverterId(clientInverterStats.getInverterId());
+
+        //使用线程处理-峰值功率数据入库(已解析)
+        ExecutorGroupFactory.getInstance().getWritingDBTaskGroup().schedule(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        inverterDataDAO.insertPowerData(tabPeakPowerData);
+                    }
+                }, 1, TimeUnit.MICROSECONDS
+        );
     }
 
     @Transactional
@@ -54,6 +78,25 @@ public class DataDealService implements IDataDealService {
 
         logger.info("转换今日发电量(KWh)，日省钱和日减排CO2(Kg)，todayGeneratingCapacity：{}KWh，todaySaveMoney：{}元，todayCO2EmissionReduction：{}Kg",
                                                                                         todayGeneratingCapacity, todaySaveMoney,todayCO2EmissionReduction);
+
+        TabTodaySummary tabTodaySummary = new TabTodaySummary();
+        tabTodaySummary.setDtuId(clientInverterStats.getDtuId());
+        tabTodaySummary.setInverterId(clientInverterStats.getInverterId());
+        tabTodaySummary.setCo2Reduction(todayCO2EmissionReduction);
+        tabTodaySummary.setSaveMoney(todaySaveMoney);
+        tabTodaySummary.setGenerateCapacity(todayGeneratingCapacity);
+        //设置日期yyyymmdd
+        tabTodaySummary.setDatestring(DateUtils.getNowTime(DateUtils.DATE_DAY_STR));
+
+        //使用线程处理-今日统计数据入库(已解析)
+        ExecutorGroupFactory.getInstance().getWritingDBTaskGroup().schedule(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        inverterDataDAO.insertTodaySummary(tabTodaySummary);
+                    }
+                }, 1, TimeUnit.MICROSECONDS
+        );
 
     }
 

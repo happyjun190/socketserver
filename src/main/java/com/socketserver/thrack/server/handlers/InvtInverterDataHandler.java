@@ -81,7 +81,7 @@ public class InvtInverterDataHandler extends ChannelInboundHandlerAdapter {
         tabInverterData.setInverterId(inverterDeviceAddr);
         tabInverterData.setStartReadAddress(clientInverterStats.getReadAddress());
 
-        //使用线程处理
+        //使用线程处理-原始数据入库
         ExecutorGroupFactory.getInstance().getWritingDBTaskGroup().schedule(
                 new Runnable() {
                     @Override

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.socketserver.thrack.dao.InverterDataDAO">
+    <!-- 创建SEQUENCE
+        CREATE SEQUENCE seq_on_todaysummary
+        INCREMENT BY 1
+        START WITH 1
+        NOMAXvalue
+        NOCYCLE
+        CACHE 100
+    -->
+    <!--插入/更新今日统计数据(今日发电量/省钱量/co2减排量)-->
+    <insert id="insertTodaySummary">
+      MERGE INTO "ts_today_summary" t1
+      USING (select #{dtuId} as dtuId, #{inverterId} as inverterId, #{generateCapacity} as generateCapacity, #{saveMoney} as saveMoney, #{co2Reduction} as co2Reduction, #{datestring} as datestring from dual ) t2
+      ON (t1."dtu_id"=t2."DTUID" AND t1."inverter_id"=t2."INVERTERID" AND t1."datestring"=t2."DATESTRING")
+      WHEN MATCHED THEN UPDATE  SET
+        t1."generate_capacity" = t2."GENERATECAPACITY",
+        t1."save_money" = t2."SAVEMONEY",
+        t1."co2_reduction" = t2."CO2REDUCTION",
+        t1."mtime" = SYSDATE
+        WHERE t1."dtu_id"=t2."DTUID" AND t1."inverter_id"=t2."INVERTERID" AND t1."datestring"=t2."DATESTRING"
+      WHEN NOT MATCHED THEN
+      INSERT("id", "dtu_id", "inverter_id", "generate_capacity", "save_money", "co2_reduction", "datestring", "ctime", "mtime")
+               VALUES (seq_on_todaysummary.nextval, #{dtuId}, #{inverterId}, #{generateCapacity}, #{saveMoney}, #{co2Reduction}, #{datestring}, SYSDATE, SYSDATE)
+    </insert>
+</mapper>
