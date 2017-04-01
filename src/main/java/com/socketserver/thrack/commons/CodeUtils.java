@@ -80,7 +80,7 @@ public final class CodeUtils
 		{
 			ex.printStackTrace();
 		}
-		logger.info("crcOK=" + crcOK);
+		//logger.info("crcOK=" + crcOK);
 		return crcOK;
 	}
 

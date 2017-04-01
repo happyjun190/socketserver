@@ -2,6 +2,8 @@ package com.socketserver.thrack.server.handlers;
 
 import com.socketserver.thrack.commons.CodeUtils;
 import com.socketserver.thrack.commons.StringUtil;
+import com.socketserver.thrack.dao.InverterDataDAO;
+import com.socketserver.thrack.model.data.TabInverterData;
 import com.socketserver.thrack.server.ExecutorGroupFactory;
 import com.socketserver.thrack.server.client.Client;
 import com.socketserver.thrack.server.client.ClientInverterStats;
@@ -34,6 +36,8 @@ public class InvtInverterDataHandler extends ChannelInboundHandlerAdapter {
 
     @Autowired
     private IDataDealService dataDealService;
+    @Autowired
+    private InverterDataDAO inverterDataDAO;
     //@Autowired
     //private SyncService syncService;
 
@@ -51,9 +55,11 @@ public class InvtInverterDataHandler extends ChannelInboundHandlerAdapter {
         if(message.length<=5) {//读响应一般5+2*N, 写响应一般8字节，读写响应出错5字节
             return;
         }
-        String messageToStr = CodeUtils.getHexString(message);
+
+
+        String messageToStr = CodeUtils.getHexString(this.getDataBytes(message));
         Client client = ClientMap.getClient(ctx.channel());
-        logger.info("client:{}, and the response is :{}", client, messageToStr);
+        logger.info("client:{}, and the response data is :{}", client, messageToStr);
 
         Map<String, ClientInverterStats> inverterStatsMap = client.getInverterStatsMap();
         //逆变器地址
@@ -64,6 +70,27 @@ public class InvtInverterDataHandler extends ChannelInboundHandlerAdapter {
             logger.info("dtu逆变器设备: {} 不存在,请于管理后台配置逆变器设备信息并重启设备！", client);
             return;
         }
+
+
+        //TODO 只在当前handler处理，其他handler不用处理
+        //数据入库
+        TabInverterData tabInverterData = new TabInverterData();
+        tabInverterData.setData(messageToStr);
+        tabInverterData.setDataLength(message.length-5);
+        tabInverterData.setDtuId(client.getDtuId());
+        tabInverterData.setInverterId(inverterDeviceAddr);
+        tabInverterData.setStartReadAddress(clientInverterStats.getReadAddress());
+
+        //使用线程处理
+        ExecutorGroupFactory.getInstance().getWritingDBTaskGroup().schedule(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        inverterDataDAO.insertInverterData(tabInverterData);
+                    }
+                }, 1, TimeUnit.MICROSECONDS
+        );
+
 
         //0英威腾逆变器
         if(clientInverterStats.getInverterType()==ClientInverterStats.INVERTER_TYPE_0) {
@@ -154,5 +181,16 @@ public class InvtInverterDataHandler extends ChannelInboundHandlerAdapter {
         return CodeUtils.getHexStringNoBlank(addrBytes);
     }
 
+
+    //获取数据区数据byte
+    private static byte[] getDataBytes(byte[] message) {
+        int length = message.length;
+        byte[] dataBytes = new byte[length-5];
+        int index = 0;
+        for(int i=3; i<length-2; i++) {
+            dataBytes[index++] = message[i];
+        }
+        return dataBytes;
+    }
 
 }

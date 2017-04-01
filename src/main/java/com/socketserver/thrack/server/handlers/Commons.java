@@ -10,11 +10,6 @@ public class Commons {
 	
 	private static final Logger logger = LoggerFactory.getLogger(Commons.class);
 
-	/*// 双向MAP，存放用户与channel关系
-	public static final BiMap<SocketUser, Channel> activeDeviceChannelMap = Maps.synchronizedBiMap(
-    		HashBiMap.<SocketUser, Channel>create() );*/
-
-
 	public static void removeCloseChannel(Channel channel) {
 		if(channel == null) {
 			logger.info("null channel.");

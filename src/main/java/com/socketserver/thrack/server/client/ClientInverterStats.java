@@ -15,7 +15,7 @@ public class ClientInverterStats {
     public static final int INVERTER_TYPE_0 = 0;//0英威腾逆变器
     public static final int INVERTER_TYPE_1 = 1;//1长虹逆变器
 
-    public static final int MAX_RESPONSE_TIME = 300;//响应超时时间 单位:秒钟
+    public static final int MAX_RESPONSE_TIME = 150;//响应超时时间 单位:秒钟
 
     private String dtuId;           //dtu设备id
     private String inverterId;      //逆变器地址

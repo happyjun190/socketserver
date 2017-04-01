@@ -105,7 +105,7 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
 				//验证通过
 				//设置dtu客户端的设备信息
 				Map<String, ClientInverterStats> inverterStatsMap = inverterDeviceDAO.getInverterStatsMap(tabDtuDevice.getId());
-				client = new Client(authKey, ctx.channel(), inverterStatsMap);
+				client = new Client(tabDtuDevice.getId(), authKey, ctx.channel(), inverterStatsMap);
 				client.touchSession(Client.Status.AUTH);
 				ClientMap.addClient(ctx.channel(), client);
 			}

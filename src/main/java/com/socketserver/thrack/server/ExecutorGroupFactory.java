@@ -54,7 +54,7 @@ public class ExecutorGroupFactory {
                 }
             }
         }
-        return ayncReqInvtTaskGroup;
+        return writingDBTaskGroup;
     }
 
 

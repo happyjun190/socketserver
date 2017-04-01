@@ -6,6 +6,7 @@ import java.util.Map;
 
 public class Client
 {
+	private int dtuId;
 	private String authKey;
 	private Status status = Status.INIT;
 	private Channel channel;
@@ -18,8 +19,9 @@ public class Client
 		INIT, AUTH, ACTIVE, TIMEOUT, BLOCK, BLACKLIST
 	}
 
-	public Client(String authKey, Channel channel, Map<String, ClientInverterStats> inverterStatsMap)
+	public Client(int dtuId, String authKey, Channel channel, Map<String, ClientInverterStats> inverterStatsMap)
 	{
+		this.dtuId = dtuId;
 		this.authKey = authKey;
 		this.channel = channel;
 		this.inverterStatsMap = inverterStatsMap;
@@ -93,12 +95,22 @@ public class Client
 		this.inverterStatsMap = inverterStatsMap;
 	}
 
+	public int getDtuId() {
+		return dtuId;
+	}
+
+	public void setDtuId(int dtuId) {
+		this.dtuId = dtuId;
+	}
+
 	@Override
 	public String toString() {
 		return "Client{" +
-				"authKey='" + authKey + '\'' +
+				"dtuId=" + dtuId +
+				", authKey='" + authKey + '\'' +
 				", status=" + status +
 				", channel=" + channel +
+				", inverterStatsMap=" + inverterStatsMap +
 				", lastAccess=" + lastAccess +
 				'}';
 	}
