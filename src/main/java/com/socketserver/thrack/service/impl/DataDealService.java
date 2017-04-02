@@ -3,6 +3,7 @@ package com.socketserver.thrack.service.impl;
 import com.socketserver.thrack.commons.DataTransformUtils;
 import com.socketserver.thrack.commons.DateUtils;
 import com.socketserver.thrack.dao.InverterDataDAO;
+import com.socketserver.thrack.model.data.TabInverterOperParams;
 import com.socketserver.thrack.model.data.TabPeakPowerData;
 import com.socketserver.thrack.model.data.TabTodaySummary;
 import com.socketserver.thrack.server.ExecutorGroupFactory;
@@ -160,7 +161,7 @@ public class DataDealService implements IDataDealService {
     @Override
     public void dataDealOfAddr1690(byte[] message, ClientInverterStats clientInverterStats) {
         byte[] dataBytes = this.getDataBytes(message);
-
+        TabInverterOperParams tabInverterOperParams = new TabInverterOperParams();
         //PV1电压
         byte[] pv1VoltageBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 0, 2);
         BigDecimal pv1Voltage = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(pv1VoltageBytes, 10);
@@ -188,6 +189,14 @@ public class DataDealService implements IDataDealService {
 
         logger.info("PV1~PV4电压分别为:{},{},{},{}", pv1Voltage, pv2Voltage, pv3Voltage, pv4Voltage);
         logger.info("PV1~PV4电流分别为:{},{},{},{}", pv1ElectricCurrent, pv2ElectricCurrent, pv3ElectricCurrent, pv4ElectricCurrent);
+        tabInverterOperParams.setPv1Voltage(pv1Voltage);
+        tabInverterOperParams.setPv2Voltage(pv2Voltage);
+        tabInverterOperParams.setPv3Voltage(pv3Voltage);
+        tabInverterOperParams.setPv4Voltage(pv4Voltage);
+        tabInverterOperParams.setPv1ElectricCurrent(pv1ElectricCurrent);
+        tabInverterOperParams.setPv2ElectricCurrent(pv2ElectricCurrent);
+        tabInverterOperParams.setPv3ElectricCurrent(pv3ElectricCurrent);
+        tabInverterOperParams.setPv4ElectricCurrent(pv4ElectricCurrent);
 
         //U相电压
         byte[] uPhaseVoltageBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 16, 2);
@@ -217,6 +226,14 @@ public class DataDealService implements IDataDealService {
 
         logger.info("U、V、W相电压及BUS电压分别为:{},{},{},{}",uPhaseVoltage, vPhaseVoltage, wPhaseVoltage, busVoltage);
         logger.info("U、V、W相电流及BUS电流分别为:{},{},{},{}",uPhaseElectricCurrent, vPhaseElectricCurrent, wPhaseElectricCurrent, busElectricCurrent);
+        tabInverterOperParams.setuPhaseVoltage(uPhaseVoltage);
+        tabInverterOperParams.setvPhaseVoltage(vPhaseVoltage);
+        tabInverterOperParams.setwPhaseVoltage(wPhaseVoltage);
+        tabInverterOperParams.setBusPhaseVoltage(busVoltage);
+        tabInverterOperParams.setuPhaseElectricCurrent(uPhaseElectricCurrent);
+        tabInverterOperParams.setvPhaseElectricCurrent(vPhaseElectricCurrent);
+        tabInverterOperParams.setwPhaseElectricCurrent(wPhaseElectricCurrent);
+        tabInverterOperParams.setBusPhaseElectricCurrent(busElectricCurrent);
 
         //电网频率
         byte[] gridFrequencyBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 32, 2);
@@ -232,6 +249,10 @@ public class DataDealService implements IDataDealService {
         BigDecimal outputPower = DataTransformUtils.tranfrom4ByteAndMulToUnsignedRealValue(outputPowerBytes, 1000);
 
         logger.info("电网频率、功率因数(有符号)、输入功率(KW)及输出功率(KW)分别为:{},{},{},{}",gridFrequency, powerFactor, inputPower, outputPower);
+        tabInverterOperParams.setGridFrequency(gridFrequency);
+        tabInverterOperParams.setPowerFactor(powerFactor);
+        tabInverterOperParams.setInputPower(inputPower);
+        tabInverterOperParams.setOutputPower(outputPower);
 
         //温度1(℃)
         byte[] temperature1Bytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 44, 2);
@@ -244,6 +265,9 @@ public class DataDealService implements IDataDealService {
         BigDecimal temperature3 = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(temperature3Bytes, 100);
 
         logger.info("温度1(℃)、温度2(℃)、温度3(℃)分别为:{},{},{}",temperature1, temperature2, temperature3);
+        tabInverterOperParams.setTemperature1(temperature1);
+        tabInverterOperParams.setTemperature2(temperature2);
+        tabInverterOperParams.setTemperature3(temperature3);
 
         //接地电阻(M)
         byte[] groundingResistanceBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 58, 2);
@@ -255,6 +279,25 @@ public class DataDealService implements IDataDealService {
         byte[] dcComponentBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 62, 2);
         BigDecimal dcComponent = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(dcComponentBytes, 1);
         logger.info("接地电阻(M)、漏电流(mA)、直流分量(mA)分别为:{},{},{}",groundingResistance, leakageCurrent, dcComponent);
+        tabInverterOperParams.setGroundingResistance(groundingResistance);
+        tabInverterOperParams.setLeakageCurrent(leakageCurrent);
+        tabInverterOperParams.setDcComponent(dcComponent);
+
+        tabInverterOperParams.setDtuId(clientInverterStats.getDtuId());
+        tabInverterOperParams.setInverterId(clientInverterStats.getInverterId());
+
+
+        //使用线程处理-运行参数信息(已解析)
+        ExecutorGroupFactory.getInstance().getWritingDBTaskGroup().schedule(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        inverterDataDAO.insertInverterOperParams(tabInverterOperParams);
+                    }
+                }, 1, TimeUnit.MICROSECONDS
+        );
+
+
     }
 
     @Transactional

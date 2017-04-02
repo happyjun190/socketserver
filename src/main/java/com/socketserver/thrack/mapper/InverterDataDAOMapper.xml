@@ -43,4 +43,23 @@
         VALUES (seq_on_todaysummary.nextval, #{dtuId}, #{inverterId}, #{totalGenerateCapacity}, #{totalSaveMoney}, #{totalCo2Reduction}, #{datestring}, SYSDATE, SYSDATE)
     </insert>
 
+
+    <!--插入运行参数信息-->
+    <insert id="insertInverterOperParams">
+        INSERT INTO "ts_inverter_oper_params" ("id", "dtu_id", "inverter_id", "pv1_voltage", "pv2_voltage", "pv3_voltage", "pv4_voltage",
+                                                "pv1_electric_current", "pv2_electric_current", "pv3_electric_current", "pv4_electric_current",
+                                                "u_phase_voltage", "v_phase_voltage", "w_phase_voltage", "bus_phase_voltage",
+                                                "u_phase_electric_current", "v_phase_electric_current", "w_phase_electric_current", "bus_phase_electric_current",
+                                                "grid_frequency", "power_factor", "input_power", "output_power",
+                                                "temperature1", "temperature2", "temperature3",
+                                                "grounding_resistance", "leakage_current", "dc_component", "ctime")
+           VALUES (seq_on_inverteroperparams.nextval, #{dtuId}, #{inverterId}, #{pv1Voltage}, #{pv2Voltage}, #{pv3Voltage}, #{pv4Voltage},
+                                                #{pv1ElectricCurrent}, #{pv2ElectricCurrent}, #{pv3ElectricCurrent}, #{pv4ElectricCurrent},
+                                                #{uPhaseVoltage}, #{vPhaseVoltage}, #{wPhaseVoltage}, #{busPhaseVoltage},
+                                                #{uPhaseElectricCurrent}, #{vPhaseElectricCurrent}, #{wPhaseElectricCurrent}, #{busPhaseElectricCurrent},
+                                                #{gridFrequency}, #{powerFactor}, #{inputPower}, #{outputPower},
+                                                #{temperature1}, #{temperature2}, #{temperature3},
+                                                #{groundingResistance}, #{leakageCurrent}, #{dcComponent}, SYSDATE)
+    </insert>
+
 </mapper>

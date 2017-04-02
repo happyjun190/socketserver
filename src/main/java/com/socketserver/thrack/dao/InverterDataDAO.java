@@ -1,6 +1,7 @@
 package com.socketserver.thrack.dao;
 
 import com.socketserver.thrack.model.data.TabInverterData;
+import com.socketserver.thrack.model.data.TabInverterOperParams;
 import com.socketserver.thrack.model.data.TabPeakPowerData;
 import com.socketserver.thrack.model.data.TabTodaySummary;
 import org.apache.ibatis.annotations.Insert;
@@ -40,5 +41,12 @@ public interface InverterDataDAO {
      * @param tabTodaySummary
      */
     void insertTotalSummary(TabTodaySummary tabTodaySummary);
+
+
+    /**
+     * 插入运行参数信息
+     * @param tabInverterOperParams
+     */
+    void insertInverterOperParams(TabInverterOperParams tabInverterOperParams);
 
 }
