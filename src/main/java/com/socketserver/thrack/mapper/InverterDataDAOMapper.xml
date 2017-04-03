@@ -96,8 +96,8 @@
             t1."exception6" = t2."EXCEPTION6",
             t1."exception7" = t2."EXCEPTION7",
             t1."exception8" = t2."EXCEPTION8",
-            t1."inverter_status" = t2."INVERTERTIME",
-            t1."inverter_time" = t2."INVERTERSTATUS",
+            t1."inverter_status" = t2."INVERTERSTATUS",
+            t1."inverter_time" = t2."INVERTERTIME",
             t1."mtime" = SYSDATE
         WHERE t1."dtu_id"=t2."DTUID" AND t1."inverter_id"=t2."INVERTERID" AND t1."datestring"=t2."DATESTRING"
         WHEN NOT MATCHED THEN
