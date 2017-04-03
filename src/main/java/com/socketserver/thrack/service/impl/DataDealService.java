@@ -180,7 +180,7 @@ public class DataDealService implements IDataDealService {
         BigDecimal inverterStatus = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(new byte[]{dataBytes[24], dataBytes[25]}, 1);
 
         logger.info("exception1-exception8:{},{},{},{},{},{},{},{}", exception1,exception2,exception3,exception4,exception5,exception6,exception7,exception8);
-        logger.info("inverterStatus:{},inverterTime:{}",inverterStatus,inverterTime.toString());
+        logger.info("inverterStatus:{},inverterTime:{}, inverterTimeGetTime:{}",inverterStatus,inverterTime.toString(), inverterTime.getTime());
         TabTodaySummary tabTodaySummary = new TabTodaySummary();
         tabTodaySummary.setDtuId(clientInverterStats.getDtuId());
         tabTodaySummary.setInverterId(clientInverterStats.getInverterId());
@@ -193,7 +193,7 @@ public class DataDealService implements IDataDealService {
         tabTodaySummary.setException7(exception7);
         tabTodaySummary.setException8(exception8);
 
-        tabTodaySummary.setInverterTime(inverterTime);
+        tabTodaySummary.setInverterTime(inverterTime.getTime());
 
         tabTodaySummary.setInverterStatus(inverterStatus.intValue());
 

@@ -84,7 +84,7 @@
         USING (select #{dtuId} as dtuId, #{inverterId} as inverterId, #{datestring} as datestring,
                        #{exception1} as exception1, #{exception2} as exception2, #{exception3} as exception3, #{exception4} as exception4,
                        #{exception5} as exception5, #{exception6} as exception6, #{exception7} as exception7, #{exception8} as exception8,
-                       #{inverterTime} as inverterTime, #{inverterStatus} as inverterStatus
+                       "TO_DATE"(TO_CHAR(#{inverterTime} / (1000 * 60 * 60 * 24) + TO_DATE('1970-01-01 08:00:00', 'YYYY-MM-DD HH:MI:SS'), 'YYYY-MM-DD HH:MI:SS'), 'YYYY-MM-DD HH:MI:SS') as inverterTime, #{inverterStatus} as inverterStatus
                 from dual ) t2
         ON (t1."dtu_id"=t2."DTUID" AND t1."inverter_id"=t2."INVERTERID" AND t1."datestring"=t2."DATESTRING")
         WHEN MATCHED THEN UPDATE  SET
@@ -107,7 +107,7 @@
                                               "datestring", "ctime", "mtime")
         VALUES (seq_on_todaysummary.nextval, #{dtuId}, #{inverterId}, #{exception1}, #{exception2}, #{exception3}, #{exception4},
                                               #{exception5}, #{exception6}, #{exception7}, #{exception8},
-                                              #{inverterStatus}, #{inverterTime},
+                                              #{inverterStatus}, "TO_DATE"(TO_CHAR(#{inverterTime} / (1000 * 60 * 60 * 24) + TO_DATE('1970-01-01 08:00:00', 'YYYY-MM-DD HH:MI:SS'), 'YYYY-MM-DD HH:MI:SS'), 'YYYY-MM-DD HH:MI:SS'),
                                               #{datestring}, SYSDATE, SYSDATE)
     </insert>
 

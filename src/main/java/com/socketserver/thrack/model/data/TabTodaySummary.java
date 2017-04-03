@@ -28,7 +28,7 @@ public class TabTodaySummary {
     private String exception6;
     private String exception7;
     private String exception8;
-    private Date inverterTime;
+    private long inverterTime;
     private int inverterStatus;
 
     public long getId() {
@@ -199,11 +199,11 @@ public class TabTodaySummary {
         this.exception8 = exception8;
     }
 
-    public Date getInverterTime() {
+    public long getInverterTime() {
         return inverterTime;
     }
 
-    public void setInverterTime(Date inverterTime) {
+    public void setInverterTime(long inverterTime) {
         this.inverterTime = inverterTime;
     }
 
