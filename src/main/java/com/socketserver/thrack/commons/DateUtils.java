@@ -113,8 +113,6 @@ public class DateUtils {
     */
    public static String getJFPTime() {
        return getNowTime(DATE_JFP_STR);
-//        SimpleDateFormat df = new SimpleDateFormat(DATE_JFP_STR);
-//        return df.format(new Date());
    }
 
    /**

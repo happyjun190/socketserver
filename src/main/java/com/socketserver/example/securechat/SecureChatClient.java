@@ -2,14 +2,11 @@ package com.socketserver.example.securechat;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.socketserver.thrack.model.message.DTUDataPackage;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;

@@ -44,9 +44,23 @@ public interface InverterDataDAO {
 
 
     /**
+     * 插入/更新当前无功功率
+     * @param tabTodaySummary
+     */
+    void insertReactivePowerToTodaySummary(TabTodaySummary tabTodaySummary);
+
+
+    /**
      * 插入运行参数信息
      * @param tabInverterOperParams
      */
     void insertInverterOperParams(TabInverterOperParams tabInverterOperParams);
+
+
+    /**
+     * 更新逆变器的一些状态(状态、逆变器时间、异常状态)
+     * @param tabTodaySummary
+     */
+    void insertInverterStatus(TabTodaySummary tabTodaySummary);
 
 }

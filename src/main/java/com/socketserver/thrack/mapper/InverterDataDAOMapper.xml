@@ -62,4 +62,53 @@
                                                 #{groundingResistance}, #{leakageCurrent}, #{dcComponent}, SYSDATE)
     </insert>
 
+
+    <!--插入/更新当前无功功率-->
+    <insert id="insertReactivePowerToTodaySummary">
+        MERGE INTO "ts_today_summary" t1
+        USING (select #{dtuId} as dtuId, #{inverterId} as inverterId, #{reactivePower} as reactivePower, #{datestring} as datestring from dual ) t2
+        ON (t1."dtu_id"=t2."DTUID" AND t1."inverter_id"=t2."INVERTERID" AND t1."datestring"=t2."DATESTRING")
+        WHEN MATCHED THEN UPDATE  SET
+            t1."reactive_power" = t2."REACTIVEPOWER",
+            t1."mtime" = SYSDATE
+        WHERE t1."dtu_id"=t2."DTUID" AND t1."inverter_id"=t2."INVERTERID" AND t1."datestring"=t2."DATESTRING"
+        WHEN NOT MATCHED THEN
+        INSERT("id", "dtu_id", "inverter_id", "reactive_power", "datestring", "ctime", "mtime")
+        VALUES (seq_on_todaysummary.nextval, #{dtuId}, #{inverterId}, #{reactivePower}, #{datestring}, SYSDATE, SYSDATE)
+    </insert>
+
+
+    <!--更新逆变器的一些状态-->
+    <insert id="insertInverterStatus">
+        MERGE INTO "ts_today_summary" t1
+        USING (select #{dtuId} as dtuId, #{inverterId} as inverterId, #{datestring} as datestring,
+                       #{exception1} as exception1, #{exception2} as exception2, #{exception3} as exception3, #{exception4} as exception4,
+                       #{exception5} as exception5, #{exception6} as exception6, #{exception7} as exception7, #{exception8} as exception8,
+                       #{inverterTime} as inverterTime, #{inverterStatus} as inverterStatus
+                from dual ) t2
+        ON (t1."dtu_id"=t2."DTUID" AND t1."inverter_id"=t2."INVERTERID" AND t1."datestring"=t2."DATESTRING")
+        WHEN MATCHED THEN UPDATE  SET
+            t1."exception1" = t2."EXCEPTION1",
+            t1."exception2" = t2."EXCEPTION2",
+            t1."exception3" = t2."EXCEPTION3",
+            t1."exception4" = t2."EXCEPTION4",
+            t1."exception5" = t2."EXCEPTION5",
+            t1."exception6" = t2."EXCEPTION6",
+            t1."exception7" = t2."EXCEPTION7",
+            t1."exception8" = t2."EXCEPTION8",
+            t1."inverter_status" = t2."INVERTERTIME",
+            t1."inverter_time" = t2."INVERTERSTATUS",
+            t1."mtime" = SYSDATE
+        WHERE t1."dtu_id"=t2."DTUID" AND t1."inverter_id"=t2."INVERTERID" AND t1."datestring"=t2."DATESTRING"
+        WHEN NOT MATCHED THEN
+        INSERT("id", "dtu_id", "inverter_id", "exception1", "exception2", "exception3", "exception4",
+                                              "exception5", "exception6", "exception7", "exception8",
+                                              "inverter_status", "inverter_time",
+                                              "datestring", "ctime", "mtime")
+        VALUES (seq_on_todaysummary.nextval, #{dtuId}, #{inverterId}, #{exception1}, #{exception2}, #{exception3}, #{exception4},
+                                              #{exception5}, #{exception6}, #{exception7}, #{exception8},
+                                              #{inverterStatus}, #{inverterTime},
+                                              #{datestring}, SYSDATE, SYSDATE)
+    </insert>
+
 </mapper>

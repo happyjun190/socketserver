@@ -1,5 +1,6 @@
 package com.socketserver.thrack.service.impl;
 
+import com.socketserver.thrack.commons.CodeUtils;
 import com.socketserver.thrack.commons.DataTransformUtils;
 import com.socketserver.thrack.commons.DateUtils;
 import com.socketserver.thrack.dao.InverterDataDAO;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -145,6 +148,68 @@ public class DataDealService implements IDataDealService {
     @Override
     public void dataDealOfAddr1670(byte[] message, ClientInverterStats clientInverterStats) {
         byte[] dataBytes = this.getDataBytes(message);
+        String exception1 = CodeUtils.getHexStringNoBlank(new byte[]{dataBytes[0], dataBytes[1]});
+        String exception2 = CodeUtils.getHexStringNoBlank(new byte[]{dataBytes[2], dataBytes[3]});
+        String exception3 = CodeUtils.getHexStringNoBlank(new byte[]{dataBytes[4], dataBytes[5]});
+        String exception4 = CodeUtils.getHexStringNoBlank(new byte[]{dataBytes[6], dataBytes[7]});
+        String exception5 = CodeUtils.getHexStringNoBlank(new byte[]{dataBytes[8], dataBytes[9]});
+        String exception6 = CodeUtils.getHexStringNoBlank(new byte[]{dataBytes[10], dataBytes[11]});
+        String exception7 = CodeUtils.getHexStringNoBlank(new byte[]{dataBytes[12], dataBytes[13]});
+        String exception8 = CodeUtils.getHexStringNoBlank(new byte[]{dataBytes[14], dataBytes[15]});
+
+        Date inverterTime = null;
+
+        String year = CodeUtils.getHexStringNoBlank(new byte[]{dataBytes[16]});
+        if(year.equals("00")) {
+            inverterTime = new Date();
+            inverterTime.setTime(0);
+        } else {
+            int yeraToInt = Integer.parseInt("20"+year);
+            int monthToInt = dataBytes[17];
+            int dayToInt = dataBytes[18];
+            int hourToInt = dataBytes[20];
+            int minutesToInt = dataBytes[21];
+            inverterTime = new Date();
+            inverterTime.setYear(yeraToInt-1900);
+            inverterTime.setMonth(monthToInt);
+            inverterTime.setDate(dayToInt);
+            inverterTime.setHours(hourToInt);
+            inverterTime.setMinutes(minutesToInt);
+        }
+        //String inverterStatus = CodeUtils.getHexStringNoBlank(new byte[]{dataBytes[24], dataBytes[25]});
+        BigDecimal inverterStatus = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(new byte[]{dataBytes[24], dataBytes[25]}, 1);
+
+        logger.info("exception1-exception8:{},{},{},{},{},{},{},{}", exception1,exception2,exception3,exception4,exception5,exception6,exception7,exception8);
+        logger.info("inverterStatus:{},inverterTime:{}",inverterStatus,inverterTime.toString());
+        TabTodaySummary tabTodaySummary = new TabTodaySummary();
+        tabTodaySummary.setDtuId(clientInverterStats.getDtuId());
+        tabTodaySummary.setInverterId(clientInverterStats.getInverterId());
+        tabTodaySummary.setException1(exception1);
+        tabTodaySummary.setException2(exception2);
+        tabTodaySummary.setException3(exception3);
+        tabTodaySummary.setException4(exception4);
+        tabTodaySummary.setException5(exception5);
+        tabTodaySummary.setException6(exception6);
+        tabTodaySummary.setException7(exception7);
+        tabTodaySummary.setException8(exception8);
+
+        tabTodaySummary.setInverterTime(inverterTime);
+
+        tabTodaySummary.setInverterStatus(inverterStatus.intValue());
+
+        //设置日期yyyymmdd
+        tabTodaySummary.setDatestring(DateUtils.getNowTime(DateUtils.DATE_DAY_STR));
+
+        //使用线程处理-更新逆变器的一些状态
+        ExecutorGroupFactory.getInstance().getWritingDBTaskGroup().schedule(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        inverterDataDAO.insertInverterStatus(tabTodaySummary);
+                    }
+                }, 1, TimeUnit.MICROSECONDS
+        );
+
     }
 
     @Transactional
@@ -155,6 +220,23 @@ public class DataDealService implements IDataDealService {
         byte[] reactivePowerBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 0, 4);
         BigDecimal reactivePower = DataTransformUtils.tranfrom4ByteAndMulToSignedRealValue(reactivePowerBytes, 1000);
         logger.info("当前无功功率reactivePower:{}", reactivePower);
+
+        TabTodaySummary tabTodaySummary = new TabTodaySummary();
+        tabTodaySummary.setDtuId(clientInverterStats.getDtuId());
+        tabTodaySummary.setInverterId(clientInverterStats.getInverterId());
+        tabTodaySummary.setReactivePower(reactivePower);
+        //设置日期yyyymmdd
+        tabTodaySummary.setDatestring(DateUtils.getNowTime(DateUtils.DATE_DAY_STR));
+
+        //使用线程处理-当前无功功率入库(已解析)
+        ExecutorGroupFactory.getInstance().getWritingDBTaskGroup().schedule(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        inverterDataDAO.insertReactivePowerToTodaySummary(tabTodaySummary);
+                    }
+                }, 1, TimeUnit.MICROSECONDS
+        );
     }
 
     @Transactional
