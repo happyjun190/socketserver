@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class InverterDataCollectServer {
 	
-	static final int PORT = 8992;
+	static final int PORT = 61735;
 	
 //	@Autowired
 //	private ApnsPushService apnsPushService;
