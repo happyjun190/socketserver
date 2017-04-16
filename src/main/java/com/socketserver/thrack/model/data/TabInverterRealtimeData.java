@@ -6,10 +6,11 @@ import java.math.BigDecimal;
  * Created by ziye on 2017/4/2.
  * 设备运行过程的参数信息
  */
-public class TabInverterOperParams {
+public class TabInverterRealtimeData {
     private int id;//运行参数id
     private String dtuId;//dtu设备id
     private String inverterId;//逆变器id
+    private String inverterAddr;//逆变器地址
     private BigDecimal pv1Voltage;//pv1电压
     private BigDecimal pv2Voltage;//pv2电压
     private BigDecimal pv3Voltage;//pv3电压
@@ -59,6 +60,14 @@ public class TabInverterOperParams {
 
     public void setInverterId(String inverterId) {
         this.inverterId = inverterId;
+    }
+
+    public String getInverterAddr() {
+        return inverterAddr;
+    }
+
+    public void setInverterAddr(String inverterAddr) {
+        this.inverterAddr = inverterAddr;
     }
 
     public BigDecimal getPv1Voltage() {

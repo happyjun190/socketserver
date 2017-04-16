@@ -78,7 +78,8 @@ public class InvtInverterDataHandler extends ChannelInboundHandlerAdapter {
         tabInverterData.setData(messageToStr);
         tabInverterData.setDataLength(message.length-5);
         tabInverterData.setDtuId(client.getDtuId());
-        tabInverterData.setInverterId(inverterDeviceAddr);
+        tabInverterData.setInverterAddr(inverterDeviceAddr);
+        tabInverterData.setInverterId(clientInverterStats.getInverterId());
         tabInverterData.setStartReadAddress(clientInverterStats.getReadAddress());
 
         //使用线程处理-原始数据入库

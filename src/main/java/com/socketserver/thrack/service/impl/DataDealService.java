@@ -4,7 +4,7 @@ import com.socketserver.thrack.commons.CodeUtils;
 import com.socketserver.thrack.commons.DataTransformUtils;
 import com.socketserver.thrack.commons.DateUtils;
 import com.socketserver.thrack.dao.InverterDataDAO;
-import com.socketserver.thrack.model.data.TabInverterOperParams;
+import com.socketserver.thrack.model.data.TabInverterRealtimeData;
 import com.socketserver.thrack.model.data.TabPeakPowerData;
 import com.socketserver.thrack.model.data.TabTodaySummary;
 import com.socketserver.thrack.server.ExecutorGroupFactory;
@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -52,6 +51,7 @@ public class DataDealService implements IDataDealService {
         tabPeakPowerData.setTodayPeakPower(todayPeakPower);
         tabPeakPowerData.setDtuId(clientInverterStats.getDtuId());
         tabPeakPowerData.setInverterId(clientInverterStats.getInverterId());
+        tabPeakPowerData.setInverterAddr(clientInverterStats.getInverterAddr());
 
         //使用线程处理-峰值功率数据入库(已解析)
         ExecutorGroupFactory.getInstance().getWritingDBTaskGroup().schedule(
@@ -86,6 +86,7 @@ public class DataDealService implements IDataDealService {
         TabTodaySummary tabTodaySummary = new TabTodaySummary();
         tabTodaySummary.setDtuId(clientInverterStats.getDtuId());
         tabTodaySummary.setInverterId(clientInverterStats.getInverterId());
+        tabTodaySummary.setInverterAddr(clientInverterStats.getInverterAddr());
         tabTodaySummary.setCo2Reduction(todayCO2EmissionReduction);
         tabTodaySummary.setSaveMoney(todaySaveMoney);
         tabTodaySummary.setGenerateCapacity(todayGeneratingCapacity);
@@ -126,6 +127,7 @@ public class DataDealService implements IDataDealService {
         TabTodaySummary tabTodaySummary = new TabTodaySummary();
         tabTodaySummary.setDtuId(clientInverterStats.getDtuId());
         tabTodaySummary.setInverterId(clientInverterStats.getInverterId());
+        tabTodaySummary.setInverterAddr(clientInverterStats.getInverterAddr());
         tabTodaySummary.setTotalCo2Reduction(totalCO2EmissionReduction);
         tabTodaySummary.setTotalSaveMoney(totalSaveMoney);
         tabTodaySummary.setTotalGenerateCapacity(totalGeneratingCapacity);
@@ -184,6 +186,7 @@ public class DataDealService implements IDataDealService {
         TabTodaySummary tabTodaySummary = new TabTodaySummary();
         tabTodaySummary.setDtuId(clientInverterStats.getDtuId());
         tabTodaySummary.setInverterId(clientInverterStats.getInverterId());
+        tabTodaySummary.setInverterAddr(clientInverterStats.getInverterAddr());
         tabTodaySummary.setException1(exception1);
         tabTodaySummary.setException2(exception2);
         tabTodaySummary.setException3(exception3);
@@ -224,6 +227,7 @@ public class DataDealService implements IDataDealService {
         TabTodaySummary tabTodaySummary = new TabTodaySummary();
         tabTodaySummary.setDtuId(clientInverterStats.getDtuId());
         tabTodaySummary.setInverterId(clientInverterStats.getInverterId());
+        tabTodaySummary.setInverterAddr(clientInverterStats.getInverterAddr());
         tabTodaySummary.setReactivePower(reactivePower);
         //设置日期yyyymmdd
         tabTodaySummary.setDatestring(DateUtils.getNowTime(DateUtils.DATE_DAY_STR));
@@ -243,7 +247,7 @@ public class DataDealService implements IDataDealService {
     @Override
     public void dataDealOfAddr1690(byte[] message, ClientInverterStats clientInverterStats) {
         byte[] dataBytes = this.getDataBytes(message);
-        TabInverterOperParams tabInverterOperParams = new TabInverterOperParams();
+        TabInverterRealtimeData tabInverterOperParams = new TabInverterRealtimeData();
         //PV1电压
         byte[] pv1VoltageBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 0, 2);
         BigDecimal pv1Voltage = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(pv1VoltageBytes, 10);
@@ -367,6 +371,7 @@ public class DataDealService implements IDataDealService {
 
         tabInverterOperParams.setDtuId(clientInverterStats.getDtuId());
         tabInverterOperParams.setInverterId(clientInverterStats.getInverterId());
+        tabInverterOperParams.setInverterAddr(clientInverterStats.getInverterAddr());
 
 
         //使用线程处理-运行参数信息(已解析)
@@ -374,7 +379,7 @@ public class DataDealService implements IDataDealService {
                 new Runnable() {
                     @Override
                     public void run() {
-                        inverterDataDAO.insertInverterOperParams(tabInverterOperParams);
+                        inverterDataDAO.insertInverterRealtimeData(tabInverterOperParams);
                     }
                 }, 1, TimeUnit.MICROSECONDS
         );

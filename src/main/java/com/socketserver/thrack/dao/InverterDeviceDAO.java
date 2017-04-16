@@ -17,6 +17,6 @@ public interface InverterDeviceDAO {
      * @param dtuId
      * @return
      */
-    @MapKey("inverterId")
+    @MapKey("inverterAddr")
     Map<String, ClientInverterStats> getInverterStatsMap(@Param("dtuId")int dtuId);
 }

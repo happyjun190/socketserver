@@ -8,7 +8,8 @@ import java.util.Date;
 public class TabInverterData {
     private int id;
     private int dtuId;
-    private String inverterId;
+    private String inverterId;//逆变器id
+    private String inverterAddr;//逆变器地址
     private int dataLength;
     private String data;
     private Date ctime;
@@ -28,14 +29,6 @@ public class TabInverterData {
 
     public void setDtuId(int dtuId) {
         this.dtuId = dtuId;
-    }
-
-    public String getInverterId() {
-        return inverterId;
-    }
-
-    public void setInverterId(String inverterId) {
-        this.inverterId = inverterId;
     }
 
     public int getDataLength() {
@@ -68,5 +61,21 @@ public class TabInverterData {
 
     public void setStartReadAddress(String startReadAddress) {
         this.startReadAddress = startReadAddress;
+    }
+
+    public String getInverterAddr() {
+        return inverterAddr;
+    }
+
+    public void setInverterAddr(String inverterAddr) {
+        this.inverterAddr = inverterAddr;
+    }
+
+    public String getInverterId() {
+        return inverterId;
+    }
+
+    public void setInverterId(String inverterId) {
+        this.inverterId = inverterId;
     }
 }

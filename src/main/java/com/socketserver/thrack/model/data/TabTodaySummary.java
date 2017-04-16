@@ -9,7 +9,8 @@ import java.util.Date;
 public class TabTodaySummary {
     private long id;
     private String dtuId;
-    private String inverterId;
+    private String inverterId;//逆变器id
+    private String inverterAddr;//逆变器地址
     private BigDecimal generateCapacity;//当日发电量
     private BigDecimal saveMoney;//当日省钱量
     private BigDecimal co2Reduction;//当日CO2减排量
@@ -53,6 +54,14 @@ public class TabTodaySummary {
 
     public void setInverterId(String inverterId) {
         this.inverterId = inverterId;
+    }
+
+    public String getInverterAddr() {
+        return inverterAddr;
+    }
+
+    public void setInverterAddr(String inverterAddr) {
+        this.inverterAddr = inverterAddr;
     }
 
     public BigDecimal getGenerateCapacity() {

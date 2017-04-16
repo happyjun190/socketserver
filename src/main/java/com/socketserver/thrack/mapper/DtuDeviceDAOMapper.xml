@@ -6,7 +6,7 @@
     <!--dtu设备表基本信息-->
     <sql id="dtuDeviceColumns">
         t1."id",
-        t1."powerplant_id" as powerplantId,
+        t1."powerstation_id" as powerstationId,
         t1."model",
         t1."auth_key" as authKey,
         t1."status",

@@ -1,7 +1,7 @@
 package com.socketserver.thrack.dao;
 
 import com.socketserver.thrack.model.data.TabInverterData;
-import com.socketserver.thrack.model.data.TabInverterOperParams;
+import com.socketserver.thrack.model.data.TabInverterRealtimeData;
 import com.socketserver.thrack.model.data.TabPeakPowerData;
 import com.socketserver.thrack.model.data.TabTodaySummary;
 import org.apache.ibatis.annotations.Insert;
@@ -16,8 +16,8 @@ public interface InverterDataDAO {
      * 采集数据时入库--原始数据
      * @param tabInverterData
      */
-    @Insert("INSERT INTO \"ts_inverter_data\" (\"id\", \"dtu_id\", \"inverter_id\", \"data_length\", \"data\", \"ctime\", \"start_read_address\") " +
-            "                          VALUES (seq_on_inverterdata.nextval, #{dtuId}, #{inverterId}, #{dataLength}, #{data}, SYSDATE, #{startReadAddress}) ")
+    @Insert("INSERT INTO \"ts_inverter_data\" (\"id\", \"dtu_id\", \"inverter_addr\", \"inverter_id\", \"data_length\", \"data\", \"ctime\", \"start_read_address\") " +
+            "                          VALUES (seq_on_inverterdata.nextval, #{dtuId}, #{inverterAddr}, #{inverterId}, #{dataLength}, #{data}, SYSDATE, #{startReadAddress}) ")
     void insertInverterData(TabInverterData tabInverterData);
 
 
@@ -25,8 +25,8 @@ public interface InverterDataDAO {
      * 峰值功率入库(今日峰值功率和历史峰值功率)
      * @param tabPeakPowerData
      */
-    @Insert("INSERT INTO \"ts_peak_power_data\" (\"id\", \"today_peak_power\", \"history_peak_power\", \"dtu_id\", \"inverter_id\", \"ctime\") " +
-            "                            VALUES (seq_on_peakpowerdata.nextval, #{todayPeakPower}, #{historyPeakPower}, #{dtuId}, #{inverterId}, SYSDATE)")
+    @Insert("INSERT INTO \"ts_peak_power_data\" (\"id\", \"today_peak_power\", \"history_peak_power\", \"dtu_id\", \"inverter_addr\", \"inverter_id\", \"ctime\") " +
+            "                            VALUES (seq_on_peakpowerdata.nextval, #{todayPeakPower}, #{historyPeakPower}, #{dtuId}, #{inverterAddr}, #{inverterId}, SYSDATE)")
     void insertPowerData(TabPeakPowerData tabPeakPowerData);
 
 
@@ -54,7 +54,7 @@ public interface InverterDataDAO {
      * 插入运行参数信息
      * @param tabInverterOperParams
      */
-    void insertInverterOperParams(TabInverterOperParams tabInverterOperParams);
+    void insertInverterRealtimeData(TabInverterRealtimeData tabInverterOperParams);
 
 
     /**

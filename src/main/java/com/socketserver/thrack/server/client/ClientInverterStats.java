@@ -18,7 +18,8 @@ public class ClientInverterStats {
     public static final int MAX_RESPONSE_TIME = 150;//响应超时时间 单位:秒钟
 
     private String dtuId;           //dtu设备id
-    private String inverterId;      //逆变器地址
+    private String inverterId;      //逆变器id
+    private String inverterAddr;    //逆变器地址
     private int lastSendTime;       //上次发送时间(second),时间戳
     private int sendStatus;         //发送状态(0未发送 1已发送(当发送request收到response请求后,将该状态置0))
                                     //TODO 由于接收到请求，处理完数据后就会发送下一个请求，则基本上不会出现置0状态
@@ -104,11 +105,20 @@ public class ClientInverterStats {
         this.powerSize = powerSize;
     }
 
+    public String getInverterAddr() {
+        return inverterAddr;
+    }
+
+    public void setInverterAddr(String inverterAddr) {
+        this.inverterAddr = inverterAddr;
+    }
+
     @Override
     public String toString() {
         return "ClientInverterStats{" +
                 "dtuId='" + dtuId + '\'' +
                 ", inverterId='" + inverterId + '\'' +
+                ", inverterAddr='" + inverterAddr + '\'' +
                 ", lastSendTime=" + lastSendTime +
                 ", sendStatus=" + sendStatus +
                 ", readAddress='" + readAddress + '\'' +

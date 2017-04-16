@@ -13,47 +13,47 @@
     <!--插入/更新今日统计数据(今日发电量/省钱量/co2减排量)-->
     <insert id="insertTodaySummary">
       MERGE INTO "ts_today_summary" t1
-      USING (select #{dtuId} as dtuId, #{inverterId} as inverterId, #{generateCapacity} as generateCapacity, #{saveMoney} as saveMoney, #{co2Reduction} as co2Reduction, #{datestring} as datestring from dual ) t2
-      ON (t1."dtu_id"=t2."DTUID" AND t1."inverter_id"=t2."INVERTERID" AND t1."datestring"=t2."DATESTRING")
+      USING (select #{dtuId} as dtuId, #{inverterAddr} as inverterAddr, #{inverterId} as inverterId, #{generateCapacity} as generateCapacity, #{saveMoney} as saveMoney, #{co2Reduction} as co2Reduction, #{datestring} as datestring from dual ) t2
+      ON (t1."dtu_id"=t2."DTUID" AND t1."inverter_addr"=t2."INVERTERADDR" AND t1."datestring"=t2."DATESTRING")
       WHEN MATCHED THEN UPDATE  SET
         t1."generate_capacity" = t2."GENERATECAPACITY",
         t1."save_money" = t2."SAVEMONEY",
         t1."co2_reduction" = t2."CO2REDUCTION",
         t1."mtime" = SYSDATE
-        WHERE t1."dtu_id"=t2."DTUID" AND t1."inverter_id"=t2."INVERTERID" AND t1."datestring"=t2."DATESTRING"
+        WHERE t1."dtu_id"=t2."DTUID" AND t1."inverter_addr"=t2."INVERTERADDR" AND t1."datestring"=t2."DATESTRING"
       WHEN NOT MATCHED THEN
-      INSERT("id", "dtu_id", "inverter_id", "generate_capacity", "save_money", "co2_reduction", "datestring", "ctime", "mtime")
-               VALUES (seq_on_todaysummary.nextval, #{dtuId}, #{inverterId}, #{generateCapacity}, #{saveMoney}, #{co2Reduction}, #{datestring}, SYSDATE, SYSDATE)
+      INSERT("id", "dtu_id", "inverter_addr", "inverter_id", "generate_capacity", "save_money", "co2_reduction", "datestring", "ctime", "mtime")
+               VALUES (seq_on_todaysummary.nextval, #{dtuId}, #{inverterAddr}, #{inverterId}, #{generateCapacity}, #{saveMoney}, #{co2Reduction}, #{datestring}, SYSDATE, SYSDATE)
     </insert>
 
 
     <!--插入/更新累计统计数据(累计发电量/省钱量/co2减排量)-->
     <insert id="insertTotalSummary">
         MERGE INTO "ts_today_summary" t1
-        USING (select #{dtuId} as dtuId, #{inverterId} as inverterId, #{totalGenerateCapacity} as totalGenerateCapacity, #{totalSaveMoney} as totalSaveMoney, #{totalCo2Reduction} as totalCo2Reduction, #{datestring} as datestring from dual ) t2
-        ON (t1."dtu_id"=t2."DTUID" AND t1."inverter_id"=t2."INVERTERID" AND t1."datestring"=t2."DATESTRING")
+        USING (select #{dtuId} as dtuId, #{inverterAddr} as inverterAddr, #{inverterId} as inverterId, #{totalGenerateCapacity} as totalGenerateCapacity, #{totalSaveMoney} as totalSaveMoney, #{totalCo2Reduction} as totalCo2Reduction, #{datestring} as datestring from dual ) t2
+        ON (t1."dtu_id"=t2."DTUID" AND t1."inverter_addr"=t2."INVERTERADDR" AND t1."datestring"=t2."DATESTRING")
         WHEN MATCHED THEN UPDATE  SET
         t1."total_generate_capacity" = t2."TOTALGENERATECAPACITY",
         t1."total_save_money" = t2."TOTALSAVEMONEY",
         t1."total_co2_reduction" = t2."TOTALCO2REDUCTION",
         t1."mtime" = SYSDATE
-        WHERE t1."dtu_id"=t2."DTUID" AND t1."inverter_id"=t2."INVERTERID" AND t1."datestring"=t2."DATESTRING"
+        WHERE t1."dtu_id"=t2."DTUID" AND t1."inverter_addr"=t2."INVERTERADDR" AND t1."datestring"=t2."DATESTRING"
         WHEN NOT MATCHED THEN
-        INSERT("id", "dtu_id", "inverter_id", "generate_capacity", "save_money", "co2_reduction", "datestring", "ctime", "mtime")
-        VALUES (seq_on_todaysummary.nextval, #{dtuId}, #{inverterId}, #{totalGenerateCapacity}, #{totalSaveMoney}, #{totalCo2Reduction}, #{datestring}, SYSDATE, SYSDATE)
+        INSERT("id", "dtu_id", "inverter_addr", "inverter_id", "generate_capacity", "save_money", "co2_reduction", "datestring", "ctime", "mtime")
+        VALUES (seq_on_todaysummary.nextval, #{dtuId}, #{inverterAddr}, #{inverterId}, #{totalGenerateCapacity}, #{totalSaveMoney}, #{totalCo2Reduction}, #{datestring}, SYSDATE, SYSDATE)
     </insert>
 
 
     <!--插入运行参数信息-->
-    <insert id="insertInverterOperParams">
-        INSERT INTO "ts_inverter_oper_params" ("id", "dtu_id", "inverter_id", "pv1_voltage", "pv2_voltage", "pv3_voltage", "pv4_voltage",
+    <insert id="insertInverterRealtimeData">
+        INSERT INTO "ts_inverter_realtimedata" ("id", "dtu_id", "inverter_addr", "inverter_id", "pv1_voltage", "pv2_voltage", "pv3_voltage", "pv4_voltage",
                                                 "pv1_electric_current", "pv2_electric_current", "pv3_electric_current", "pv4_electric_current",
                                                 "u_phase_voltage", "v_phase_voltage", "w_phase_voltage", "bus_phase_voltage",
                                                 "u_phase_electric_current", "v_phase_electric_current", "w_phase_electric_current", "bus_phase_electric_current",
                                                 "grid_frequency", "power_factor", "input_power", "output_power",
                                                 "temperature1", "temperature2", "temperature3",
                                                 "grounding_resistance", "leakage_current", "dc_component", "ctime")
-           VALUES (seq_on_inverteroperparams.nextval, #{dtuId}, #{inverterId}, #{pv1Voltage}, #{pv2Voltage}, #{pv3Voltage}, #{pv4Voltage},
+           VALUES (seq_on_inverteroperparams.nextval, #{dtuId}, #{inverterAddr}, #{inverterId}, #{pv1Voltage}, #{pv2Voltage}, #{pv3Voltage}, #{pv4Voltage},
                                                 #{pv1ElectricCurrent}, #{pv2ElectricCurrent}, #{pv3ElectricCurrent}, #{pv4ElectricCurrent},
                                                 #{uPhaseVoltage}, #{vPhaseVoltage}, #{wPhaseVoltage}, #{busPhaseVoltage},
                                                 #{uPhaseElectricCurrent}, #{vPhaseElectricCurrent}, #{wPhaseElectricCurrent}, #{busPhaseElectricCurrent},
@@ -66,27 +66,27 @@
     <!--插入/更新当前无功功率-->
     <insert id="insertReactivePowerToTodaySummary">
         MERGE INTO "ts_today_summary" t1
-        USING (select #{dtuId} as dtuId, #{inverterId} as inverterId, #{reactivePower} as reactivePower, #{datestring} as datestring from dual ) t2
-        ON (t1."dtu_id"=t2."DTUID" AND t1."inverter_id"=t2."INVERTERID" AND t1."datestring"=t2."DATESTRING")
+        USING (select #{dtuId} as dtuId, #{inverterAddr} as inverterAddr, #{inverterId} as inverterId, #{reactivePower} as reactivePower, #{datestring} as datestring from dual ) t2
+        ON (t1."dtu_id"=t2."DTUID" AND t1."inverter_addr"=t2."INVERTERADDR" AND t1."datestring"=t2."DATESTRING")
         WHEN MATCHED THEN UPDATE  SET
             t1."reactive_power" = t2."REACTIVEPOWER",
             t1."mtime" = SYSDATE
-        WHERE t1."dtu_id"=t2."DTUID" AND t1."inverter_id"=t2."INVERTERID" AND t1."datestring"=t2."DATESTRING"
+        WHERE t1."dtu_id"=t2."DTUID" AND t1."inverter_addr"=t2."INVERTERADDR" AND t1."datestring"=t2."DATESTRING"
         WHEN NOT MATCHED THEN
-        INSERT("id", "dtu_id", "inverter_id", "reactive_power", "datestring", "ctime", "mtime")
-        VALUES (seq_on_todaysummary.nextval, #{dtuId}, #{inverterId}, #{reactivePower}, #{datestring}, SYSDATE, SYSDATE)
+        INSERT("id", "dtu_id", "inverter_addr", "inverter_id", "reactive_power", "datestring", "ctime", "mtime")
+        VALUES (seq_on_todaysummary.nextval, #{dtuId}, #{inverterAddr}, #{inverterId}, #{reactivePower}, #{datestring}, SYSDATE, SYSDATE)
     </insert>
 
 
     <!--更新逆变器的一些状态-->
     <insert id="insertInverterStatus">
         MERGE INTO "ts_today_summary" t1
-        USING (select #{dtuId} as dtuId, #{inverterId} as inverterId, #{datestring} as datestring,
+        USING (select #{dtuId} as dtuId, #{inverterAddr} as inverterAddr, #{inverterId} as inverterId, #{datestring} as datestring,
                        #{exception1} as exception1, #{exception2} as exception2, #{exception3} as exception3, #{exception4} as exception4,
                        #{exception5} as exception5, #{exception6} as exception6, #{exception7} as exception7, #{exception8} as exception8,
                        "TO_DATE"(TO_CHAR(#{inverterTime} / (1000 * 60 * 60 * 24) + TO_DATE('1970-01-01 08:00:00', 'YYYY-MM-DD HH:MI:SS'), 'YYYY-MM-DD HH:MI:SS'), 'YYYY-MM-DD HH:MI:SS') as inverterTime, #{inverterStatus} as inverterStatus
                 from dual ) t2
-        ON (t1."dtu_id"=t2."DTUID" AND t1."inverter_id"=t2."INVERTERID" AND t1."datestring"=t2."DATESTRING")
+        ON (t1."dtu_id"=t2."DTUID" AND t1."inverter_addr"=t2."INVERTERADDR" AND t1."datestring"=t2."DATESTRING")
         WHEN MATCHED THEN UPDATE  SET
             t1."exception1" = t2."EXCEPTION1",
             t1."exception2" = t2."EXCEPTION2",
@@ -99,13 +99,13 @@
             t1."inverter_status" = t2."INVERTERSTATUS",
             t1."inverter_time" = t2."INVERTERTIME",
             t1."mtime" = SYSDATE
-        WHERE t1."dtu_id"=t2."DTUID" AND t1."inverter_id"=t2."INVERTERID" AND t1."datestring"=t2."DATESTRING"
+        WHERE t1."dtu_id"=t2."DTUID" AND t1."inverter_addr"=t2."INVERTERADDR" AND t1."datestring"=t2."DATESTRING"
         WHEN NOT MATCHED THEN
-        INSERT("id", "dtu_id", "inverter_id", "exception1", "exception2", "exception3", "exception4",
+        INSERT("id", "dtu_id", "inverter_addr", "inverter_id", "exception1", "exception2", "exception3", "exception4",
                                               "exception5", "exception6", "exception7", "exception8",
                                               "inverter_status", "inverter_time",
                                               "datestring", "ctime", "mtime")
-        VALUES (seq_on_todaysummary.nextval, #{dtuId}, #{inverterId}, #{exception1}, #{exception2}, #{exception3}, #{exception4},
+        VALUES (seq_on_todaysummary.nextval, #{dtuId}, #{inverterAddr}, #{inverterId}, #{exception1}, #{exception2}, #{exception3}, #{exception4},
                                               #{exception5}, #{exception6}, #{exception7}, #{exception8},
                                               #{inverterStatus}, "TO_DATE"(TO_CHAR(#{inverterTime} / (1000 * 60 * 60 * 24) + TO_DATE('1970-01-01 08:00:00', 'YYYY-MM-DD HH:MI:SS'), 'YYYY-MM-DD HH:MI:SS'), 'YYYY-MM-DD HH:MI:SS'),
                                               #{datestring}, SYSDATE, SYSDATE)

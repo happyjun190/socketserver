@@ -7,7 +7,7 @@ import java.util.Date;
  */
 public class TabDtuDevice {
     private int id;//主键
-    private int powerplantId;//电厂ID
+    private String powerstationId;//电厂ID
     private String model;//dtu型号
     private String authKey;//校验串
     private int status;//dtu设备状态 0正常 1废弃 其他状态待需求完善
@@ -24,12 +24,12 @@ public class TabDtuDevice {
         this.id = id;
     }
 
-    public int getPowerplantId() {
-        return powerplantId;
+    public String getPowerstationId() {
+        return powerstationId;
     }
 
-    public void setPowerplantId(int powerplantId) {
-        this.powerplantId = powerplantId;
+    public void setPowerstationId(String powerstationId) {
+        this.powerstationId = powerstationId;
     }
 
     public String getModel() {

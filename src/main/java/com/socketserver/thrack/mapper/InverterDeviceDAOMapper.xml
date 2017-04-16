@@ -5,7 +5,8 @@
 
     <!--dtu的逆变器表基本信息-->
     <sql id="inverterDeviceColumns">
-        t1."inverter_id" as inverterId,
+        t1."id" as inverterId,
+        t1."inverter_addr" as inverterAddr,
         t1."dtu_id" as dtuId,
         t1."mtime",
         t1."status",

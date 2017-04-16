@@ -93,7 +93,7 @@ public class ScheduleTaskService {
      */
     private void sendRequsetToSleptInvtInverter(Channel channel, Map<String, ClientInverterStats> inverterStatsMap) {
         ClientInverterStats clientInverterStats;
-        String inverterId;
+        String inverterAddr;
         byte[] inverterAddress;//逆变器地址 byte
         String readAddress;//在逆变器上读取数据区的地址
         byte[] readAddressBytes;//读取寄存器的地址
@@ -110,8 +110,8 @@ public class ScheduleTaskService {
             if(clientInverterStats.getInverterType()==ClientInverterStats.INVERTER_TYPE_0&&(clientInverterStats.getSendStatus()==ClientInverterStats.SEND_STATUS_0||
                     (clientInverterStats.getSendStatus()==ClientInverterStats.SEND_STATUS_1&&timeinterval>ClientInverterStats.MAX_RESPONSE_TIME))) {
                 logger.info("inverterType:{}, sendStatus:{}, timeinterval:{}", clientInverterStats.getInverterType(), clientInverterStats.getSendStatus(), timeinterval);
-                inverterId = clientInverterStats.getInverterId();
-                inverterAddress = CodeUtils.hexStringToBytes(inverterId);
+                inverterAddr = clientInverterStats.getInverterAddr();
+                inverterAddress = CodeUtils.hexStringToBytes(inverterAddr);
                 readAddress = clientInverterStats.getReadAddress();
                 if(StringUtil.isBlank(readAddress)) {
                     //如果逆变器没有最后的读取的寄存器的地址，则设置为最开始的寄存器地址
@@ -148,7 +148,7 @@ public class ScheduleTaskService {
      */
     private void sendRequsetToSleptChangHongInverter(Channel channel, Map<String, ClientInverterStats> inverterStatsMap) {
         ClientInverterStats clientInverterStats;
-        String inverterId;
+        String inverterAddr;
         byte[] inverterAddress;//逆变器地址 byte
         String readAddress;//在逆变器上读取数据区的地址
         byte[] readAddressBytes;//读取寄存器的地址
@@ -165,8 +165,8 @@ public class ScheduleTaskService {
             //未发送请求 or 超时未收到相应(超时时间为300秒) //TODO 并且是铁塔-长虹逆变器 inverterType=1
             if(clientInverterStats.getInverterType()==ClientInverterStats.INVERTER_TYPE_1&&(clientInverterStats.getSendStatus()==ClientInverterStats.SEND_STATUS_0||
                     (clientInverterStats.getSendStatus()==ClientInverterStats.SEND_STATUS_1&&timeinterval>ClientInverterStats.MAX_RESPONSE_TIME))) {
-                inverterId = clientInverterStats.getInverterId();
-                inverterAddress = CodeUtils.hexStringToBytes(inverterId);
+                inverterAddr = clientInverterStats.getInverterAddr();
+                inverterAddress = CodeUtils.hexStringToBytes(inverterAddr);
                 readAddress = clientInverterStats.getReadAddress();
                 if(StringUtil.isBlank(readAddress)) {
                     //如果逆变器没有最后的读取的寄存器的地址，则设置为最开始的寄存器地址
