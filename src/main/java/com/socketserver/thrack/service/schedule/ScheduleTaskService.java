@@ -145,7 +145,10 @@ public class ScheduleTaskService {
                 requestBytes[requestBytes.length-2] = bcrc[0];
                 requestBytes[requestBytes.length-1] = bcrc[1];
                 logger.info("schedule task requestBytes is : {}, channelstate:{}", CodeUtils.getHexString(requestBytes), channel.isActive());
-                channel.writeAndFlush(requestBytes);
+                //channel.writeAndFlush(requestBytes);
+                ByteBuf encoded = channel.alloc().buffer();
+                encoded.writeBytes(requestBytes);
+                channel.writeAndFlush(encoded);
 
                 //TODO 需要改变逆变器状态
                 clientInverterStats.setLastSendTime(nowTimeToInt);
