@@ -73,7 +73,7 @@ public class ChangHongInverterDataHandler extends ChannelInboundHandlerAdapter {
                     new Runnable() {
                         @Override
                         public void run() {
-                            sendReqToInvtInverterDevice.sendReqToInvtInverterDevice("00", inverterDeviceAddr, ctx, clientInverterStats);
+                            sendReqToInvtInverterDevice.sendReqToInvtInverterDevice(false, "00", inverterDeviceAddr, ctx, clientInverterStats);
                         }
                     }, 30, TimeUnit.SECONDS
             );

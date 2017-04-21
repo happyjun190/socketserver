@@ -166,7 +166,7 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
 				new Runnable() {
 					@Override
 					public void run() {
-						sendReqToInvtInverterDevice.sendReqToInvtInverterDevice(readAddress, inverterDeviceAddr, ctx, clientInverterStats);
+						sendReqToInvtInverterDevice.sendReqToInvtInverterDevice(false, readAddress, inverterDeviceAddr, ctx, clientInverterStats);
 					}
 				}, 30, TimeUnit.SECONDS
 		);
