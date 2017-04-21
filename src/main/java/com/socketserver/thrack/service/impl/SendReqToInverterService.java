@@ -9,6 +9,7 @@ import com.socketserver.thrack.server.client.ClientInverterStats;
 import com.socketserver.thrack.server.client.ClientMap;
 import com.socketserver.thrack.server.client.Constants;
 import com.socketserver.thrack.service.ISendReqToInverterService;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +67,11 @@ public class SendReqToInverterService implements ISendReqToInverterService {
 
         redisOperator.set(RedisConstants.Prefix.CHANNEL_LAST_SEND_TIME+authKey, String.valueOf(nowTime));
         //发送消息
-        ctx.writeAndFlush(requestBytes);
+        //channel.writeAndFlush(requestBytes);
+        ByteBuf encoded = ctx.channel().alloc().buffer();
+        encoded.writeBytes(requestBytes);
+        ctx.channel().writeAndFlush(encoded);
+        //ctx.writeAndFlush(requestBytes);
 
         //改变逆变器状态
         clientInverterStats.setLastSendTime(DateUtils.dateToInt());
