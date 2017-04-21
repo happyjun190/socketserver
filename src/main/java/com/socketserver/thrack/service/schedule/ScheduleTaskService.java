@@ -48,7 +48,8 @@ public class ScheduleTaskService {
                 logger.info("这个dtu设备下没有任何逆变器设备，client：{}", client);
             } else {
                 //验证通过或者是活跃状态
-                if(client.getStatus()==Client.Status.AUTH||client.getStatus()==Client.Status.ACTIVE) {
+                /*if(client.getStatus()==Client.Status.AUTH||client.getStatus()==Client.Status.ACTIVE) {*/
+                if(client.getStatus()==Client.Status.ACTIVE) {
                     sendRequsetToSleptInvtInverter(channel, inverterStatsMap);
                 } else {
                     logger.info("这个dtu设备channel未鉴权通过或处于不活跃状态，client：{}", client);
@@ -131,7 +132,7 @@ public class ScheduleTaskService {
 
                 try {
                     requestBytes = request.encode();
-                    logger.info("请求逆变器的数据为:{}" + CodeUtils.getHexString(requestBytes));
+                    logger.info("请求逆变器的数据为:{}", CodeUtils.getHexString(requestBytes));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -143,10 +144,8 @@ public class ScheduleTaskService {
                 bcrc = CodeUtils.crc16(requestBytes, requestBytes.length-2);//length-2 因为加上了CRC高低位
                 requestBytes[requestBytes.length-2] = bcrc[0];
                 requestBytes[requestBytes.length-1] = bcrc[1];
-                logger.info("schedule task requestBytes is : {}", CodeUtils.getHexString(requestBytes));
+                logger.info("schedule task requestBytes is : {}, channelstate:{}", CodeUtils.getHexString(requestBytes), channel.isActive());
                 channel.writeAndFlush(requestBytes);
-
-
 
                 //TODO 需要改变逆变器状态
                 clientInverterStats.setLastSendTime(nowTimeToInt);

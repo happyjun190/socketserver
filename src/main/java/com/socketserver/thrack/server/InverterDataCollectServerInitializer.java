@@ -1,14 +1,10 @@
 package com.socketserver.thrack.server;
 
 import com.socketserver.thrack.server.client.Constants;
-import com.socketserver.thrack.server.handlers.ChangHongInverterDataHandler;
-import com.socketserver.thrack.server.handlers.HeartBeatHandler;
-import com.socketserver.thrack.server.handlers.InvtInverterDataHandler;
+import com.socketserver.thrack.server.handlers.*;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import com.socketserver.thrack.server.handlers.AuthenticationHandler;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -45,8 +41,9 @@ public class InverterDataCollectServerInitializer extends ChannelInitializer<Soc
         //接收时,将数据转换为byte数组
         pipeline.addLast(new ByteArrayDecoder());
         
-        //发送时,将数据转换为byte数组
-        pipeline.addLast(new ByteArrayEncoder());
+        /*//发送时,将数据转换为byte数组
+        pipeline.addLast(new ByteArrayEncoder());*/
+        pipeline.addLast(new RequestEncoder());
         
         // and then business logic.
         //1、IDEL+验证数据(CRC16算法)+消息基本处理
