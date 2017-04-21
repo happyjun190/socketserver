@@ -139,12 +139,11 @@ public class ScheduleTaskService {
                 ByteBuf encoded = channel.alloc().buffer();
                 encoded.writeBytes(requestBytes);
                 channel.writeAndFlush(encoded);*/
-
                 requestBytes = new byte[]{inverterAddress[0], 0x03, readAddressBytes[0], readAddressBytes[1], 0x00, (byte) requestSize, 0x00, 0x00};
                 bcrc = CodeUtils.crc16(requestBytes, requestBytes.length-2);//length-2 因为加上了CRC高低位
                 requestBytes[requestBytes.length-2] = bcrc[0];
                 requestBytes[requestBytes.length-1] = bcrc[1];
-                logger.info("schedule task requestBytes is : {}, channelstate:{}", CodeUtils.getHexString(requestBytes), channel.isActive());
+                logger.info("schedule task requestBytes is : {}, requestSize:{}, channelstate:{}", CodeUtils.getHexString(requestBytes), requestSize, channel.isActive());
                 //channel.writeAndFlush(requestBytes);
                 ByteBuf encoded = channel.alloc().buffer();
                 encoded.writeBytes(requestBytes);
