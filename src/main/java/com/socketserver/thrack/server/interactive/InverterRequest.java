@@ -47,8 +47,7 @@ public class InverterRequest
 		return bos.toByteArray();
 	}
 
-	/*public static void main(String[] args) throws IOException
-	{
+	/*public static void main(String[] args) throws IOException {
 		InverterRequest mb = new InverterRequest();
 		byte[] bytes = mb.encode();
 
@@ -58,4 +57,13 @@ public class InverterRequest
 		}
 		System.out.println();
 	}*/
+
+
+	public static void main(String[] args) throws IOException {
+		byte[] pdu = null;
+		InverterRequest inverterRequest = new InverterRequest((byte) 0x01, (byte) 0x03, (short) 0x121C, (short) 0x0014);
+		pdu = inverterRequest.encode();
+		String s = CodeUtils.getHexString(pdu);
+		System.out.println(s);
+	}
 }
