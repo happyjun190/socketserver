@@ -114,13 +114,14 @@ public class InvtInverterDataHandler extends ChannelInboundHandlerAdapter {
                 //如果消息长度与期望长度不一致，则再次请求
                 //异步发送request消息
                 logger.info("如果消息长度与期望长度不一致，则再次请求");
+                //TODO 长度不一致时，不用等待30S，等待5s
                 ExecutorGroupFactory.getInstance().getAyncReqInvtTaskGroup().schedule(
                         new Runnable() {
                             @Override
                             public void run() {
                                 sendReqToInvtInverterDevice.sendReqToInvtInverterDevice(true, readAddress, inverterDeviceAddr, ctx, clientInverterStats);
                             }
-                        }, 30, TimeUnit.SECONDS
+                        }, 5, TimeUnit.SECONDS
                 );
                 return;
             }

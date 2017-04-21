@@ -166,13 +166,14 @@ public class DataDealService implements IDataDealService {
             inverterTime = new Date();
             inverterTime.setTime(0);
         } else {
-            int yeraToInt = Integer.parseInt("20"+year);
+            int year1ToInt = dataBytes[16];
+            int yerToInt = Integer.parseInt("20"+year1ToInt);
             int monthToInt = dataBytes[17];
             int dayToInt = dataBytes[18];
             int hourToInt = dataBytes[20];
             int minutesToInt = dataBytes[21];
             inverterTime = new Date();
-            inverterTime.setYear(yeraToInt-1900);
+            inverterTime.setYear(yerToInt-1900);
             inverterTime.setMonth(monthToInt);
             inverterTime.setDate(dayToInt);
             inverterTime.setHours(hourToInt);
