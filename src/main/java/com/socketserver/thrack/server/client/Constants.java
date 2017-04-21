@@ -6,7 +6,7 @@ public class Constants
 	public static final long CLIENT_TIMEOUT = 120 * 1000l;
 	public static final long CLIENT_CACHE_TIMEOUT = 3600 * 1000l; // 一小时的缓存
 
-	public static final String HEART_BEAT_MSG = "3030";//心跳消息
+	public static final String HEART_BEAT_MSG = "3131";//心跳消息
 
 
 	// 触发IDLE_STATE_HANDLER时间 10分钟

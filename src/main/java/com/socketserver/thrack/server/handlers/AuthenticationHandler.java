@@ -54,7 +54,7 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
     	//判断是否已经有channel
 		Client client = ClientMap.getClient(ctx.channel());
 		if(client==null) {
-			logger.info("AuthenticationHandler-->>channelActive-->>ClientMap.addClient:{}",ctx.channel());
+			logger.info("AuthenticationHandler-->>channelActive-->>clientInfo:{}",ctx.channel());
 			ClientMap.addClient(ctx.channel(), client);
 		} else {
 			logger.info("AuthenticationHandler-->>channelActive-->>has channel");
