@@ -123,6 +123,7 @@ public class ScheduleTaskService {
                 bcrc = CodeUtils.crc16(requestBytes, requestBytes.length-2);//length-2 因为加上了CRC高低位
                 requestBytes[requestBytes.length-2] = bcrc[0];
                 requestBytes[requestBytes.length-1] = bcrc[1];
+                logger.info("schedule task requestBytes is : {}", CodeUtils.getHexString(requestBytes));
                 channel.writeAndFlush(requestBytes);
                 //TODO 需要改变逆变器状态
                 clientInverterStats.setLastSendTime(nowTimeToInt);
