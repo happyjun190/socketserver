@@ -72,6 +72,7 @@ public class SendReqToInverterService implements ISendReqToInverterService {
 
         redisOperator.set(RedisConstants.Prefix.CHANNEL_LAST_SEND_TIME+authKey, String.valueOf(nowTime));
         //发送消息
+        logger.info("异步发送的数据 requestBytes is : {}, requestSize:{}, channelstate:{}", CodeUtils.getHexString(requestBytes), requestSize, ctx.channel().isActive());
         //channel.writeAndFlush(requestBytes);
         ByteBuf encoded = ctx.channel().alloc().buffer();
         encoded.writeBytes(requestBytes);
