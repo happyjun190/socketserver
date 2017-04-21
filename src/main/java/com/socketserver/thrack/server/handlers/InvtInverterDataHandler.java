@@ -103,7 +103,6 @@ public class InvtInverterDataHandler extends ChannelInboundHandlerAdapter {
             }
 
 
-
             //判断当前消息长度是否符合需要的长度，如果不符合，则抛弃消息
             int messageDataSize = StartAddrAndReadSize.getSizeByAddress(readAddress);//数据长度为请求寄存器个数*2
             messageDataSize = messageDataSize*2;
@@ -111,7 +110,7 @@ public class InvtInverterDataHandler extends ChannelInboundHandlerAdapter {
             //TODO 后续可能需要使用java反射机制执行方法(并结合java8的新特性),还需结合spring
             logger.info("now deal with the data with the startaddress : {}, msg length:{}, data length:{} ", readAddress, message.length, messageDataSize);
 
-            if((message.length-5)!= messageDataSize) {
+            if((message.length-5)!= messageDataSize) {//repeat send
                 //如果消息长度与期望长度不一致，则再次请求
                 //异步发送request消息
                 logger.info("如果消息长度与期望长度不一致，则再次请求");
@@ -119,7 +118,7 @@ public class InvtInverterDataHandler extends ChannelInboundHandlerAdapter {
                         new Runnable() {
                             @Override
                             public void run() {
-                                sendReqToInvtInverterDevice.sendReqToInvtInverterDevice(readAddress, inverterDeviceAddr, ctx, clientInverterStats);
+                                sendReqToInvtInverterDevice.sendReqToInvtInverterDevice(true, readAddress, inverterDeviceAddr, ctx, clientInverterStats);
                             }
                         }, 30, TimeUnit.SECONDS
                 );
@@ -161,7 +160,7 @@ public class InvtInverterDataHandler extends ChannelInboundHandlerAdapter {
                     new Runnable() {
                         @Override
                         public void run() {
-                            sendReqToInvtInverterDevice.sendReqToInvtInverterDevice(readAddress, inverterDeviceAddr, ctx, clientInverterStats);
+                            sendReqToInvtInverterDevice.sendReqToInvtInverterDevice(false, readAddress, inverterDeviceAddr, ctx, clientInverterStats);
                         }
                     }, 30, TimeUnit.SECONDS
             );

@@ -11,9 +11,10 @@ public interface ISendReqToInverterService {
     /**
      * 给指定channel的指定逆变器发送读请求
      * @param readAddress
+     * @param isRepeat 是否重发 ture:是 false:否
      * @param inverterDeviceAddr
      * @param ctx
      * @param clientInverterStats
      */
-    void sendReqToInvtInverterDevice(String readAddress, String inverterDeviceAddr, ChannelHandlerContext ctx, ClientInverterStats clientInverterStats);
+    void sendReqToInvtInverterDevice(boolean isRepeat, String readAddress, String inverterDeviceAddr, ChannelHandlerContext ctx, ClientInverterStats clientInverterStats);
 }

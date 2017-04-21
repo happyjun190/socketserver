@@ -43,8 +43,8 @@ public class Constants
 		ADDR_1652("1652",  10,  new byte[]{ 0x16,       0x52},  3),		//读取0x1652~0x165B段位10个寄存器数据，共 20byte
 		ADDR_1670("1670",  14,  new byte[]{ 0x16,       0x70},  4),		//读取0x1670~0x167D段位14个寄存器数据，共 28byte
 		ADDR_168E("168E",  2 ,  new byte[]{ 0x16, (byte)0x8E},  5),		//读取0x168E~0x168F段位 2个寄存器数据，共  4byte
-		ADDR_1690("1690",  32,  new byte[]{ 0x16, (byte)0x90},  6),		//读取0x1690~0x16AF段位32个寄存器数据，共 64byte
-		ADDR_16A0("16A0",  32,  new byte[]{ 0x16, (byte)0xA0},  7),		//读取0x1690~0x16AF段位32个寄存器数据，共 64byte
+		ADDR_1690("1690",  16,  new byte[]{ 0x16, (byte)0x90},  6),		//读取0x1690~0x16AF段位32个寄存器数据，共 64byte
+		ADDR_16A0("16A0",  16,  new byte[]{ 0x16, (byte)0xA0},  7),		//读取0x1690~0x16AF段位32个寄存器数据，共 64byte
 		//ADDR_1800("1800",  80,  new byte[]{ 0x18,       0x00},  8),		//读取0x1800~0x184F段位80个寄存器数据，共160byte
 		;
 

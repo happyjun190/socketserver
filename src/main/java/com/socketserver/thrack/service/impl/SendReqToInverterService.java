@@ -27,15 +27,20 @@ public class SendReqToInverterService implements ISendReqToInverterService {
     @Autowired
     private IRedisOperator redisOperator;
 
-    public void sendReqToInvtInverterDevice(String readAddress, String inverterDeviceAddr, ChannelHandlerContext ctx, ClientInverterStats clientInverterStats) {
+    public void sendReqToInvtInverterDevice(boolean isRepeat, String readAddress, String inverterDeviceAddr, ChannelHandlerContext ctx, ClientInverterStats clientInverterStats) {
         String reqReadAddress;
         int index = Constants.StartAddrAndReadSize.getIndexByAddress(readAddress);
-        if(index==Constants.MAX_INDEX_OF_ADDRESS) {//已经是最大的index
-            reqReadAddress = Constants.ADDR_1600;
+        if(isRepeat) {//重发的消息直接请求当前读取的地址，否则请求新的读取地址
+            reqReadAddress = readAddress;
         } else {
-            //获取下一个请求地址
-            reqReadAddress = Constants.StartAddrAndReadSize.getAddressByIndex(index+1);
+            if(index==Constants.MAX_INDEX_OF_ADDRESS) {//已经是最大的index
+                reqReadAddress = Constants.ADDR_1600;
+            } else {
+                //获取下一个请求地址
+                reqReadAddress = Constants.StartAddrAndReadSize.getAddressByIndex(index+1);
+            }
         }
+
         byte[] inverterAddress = CodeUtils.hexStringToBytes(inverterDeviceAddr);
         byte[] readAddressBytes = CodeUtils.hexStringToBytes(reqReadAddress);
         int requestSize = Constants.StartAddrAndReadSize.getSizeByAddress(readAddress);
