@@ -23,6 +23,7 @@ public class Constants
 	public static final String ADDR_1670 = "1670";
 	public static final String ADDR_168E = "168E";
 	public static final String ADDR_1690 = "1690";
+	public static final String ADDR_16A0 = "16A0";
 	public static final String ADDR_1800 = "1800";
 
 	//StartAddrAndReadSize中最大的index
@@ -43,7 +44,8 @@ public class Constants
 		ADDR_1670("1670",  14,  new byte[]{ 0x16,       0x70},  4),		//读取0x1670~0x167D段位14个寄存器数据，共 28byte
 		ADDR_168E("168E",  2 ,  new byte[]{ 0x16, (byte)0x8E},  5),		//读取0x168E~0x168F段位 2个寄存器数据，共  4byte
 		ADDR_1690("1690",  32,  new byte[]{ 0x16, (byte)0x90},  6),		//读取0x1690~0x16AF段位32个寄存器数据，共 64byte
-		ADDR_1800("1800",  80,  new byte[]{ 0x18,       0x00},  7),		//读取0x1800~0x184F段位80个寄存器数据，共160byte
+		ADDR_16A0("16A0",  32,  new byte[]{ 0x16, (byte)0xA0},  7),		//读取0x1690~0x16AF段位32个寄存器数据，共 64byte
+		//ADDR_1800("1800",  80,  new byte[]{ 0x18,       0x00},  8),		//读取0x1800~0x184F段位80个寄存器数据，共160byte
 		;
 
 		private final String address;

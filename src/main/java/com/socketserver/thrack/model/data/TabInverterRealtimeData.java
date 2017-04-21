@@ -38,6 +38,9 @@ public class TabInverterRealtimeData {
     private BigDecimal leakageCurrent;//漏电流(mA)
     private BigDecimal dcComponent;//直流分量(mA)
 
+    private int highdataInsert;//高位数据(1690开始的数据)存储状态:0 未存储 1已存储
+    private int lowdataInsert;//低位数据(16A0开始的数据)存储状态:0 未存储 1已存储
+
     public int getId() {
         return id;
     }
@@ -276,5 +279,21 @@ public class TabInverterRealtimeData {
 
     public void setDcComponent(BigDecimal dcComponent) {
         this.dcComponent = dcComponent;
+    }
+
+    public int getHighdataInsert() {
+        return highdataInsert;
+    }
+
+    public void setHighdataInsert(int highdataInsert) {
+        this.highdataInsert = highdataInsert;
+    }
+
+    public int getLowdataInsert() {
+        return lowdataInsert;
+    }
+
+    public void setLowdataInsert(int lowdataInsert) {
+        this.lowdataInsert = lowdataInsert;
     }
 }

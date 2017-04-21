@@ -44,11 +44,18 @@ public interface IDataDealService {
     void dataDealOfAddr168E(byte[] message, ClientInverterStats clientInverterStats);
 
     /**
-     * 读取0x1690~0x16AF段位32个寄存器数据
+     * 读取0x1690~0x169F段位16个寄存器数据
      * @param message
      * @param clientInverterStats
      */
     void dataDealOfAddr1690(byte[] message, ClientInverterStats clientInverterStats);
+
+    /**
+     * 读取0x16A0~0x16AF段位16个寄存器数据
+     * @param message
+     * @param clientInverterStats
+     */
+    void dataDealOfAddr16A0(byte[] message, ClientInverterStats clientInverterStats);
 
     /**
      * 读取0x1800~0x184F段位32个寄存器数据

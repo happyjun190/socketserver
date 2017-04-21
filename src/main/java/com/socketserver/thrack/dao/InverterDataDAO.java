@@ -5,6 +5,7 @@ import com.socketserver.thrack.model.data.TabInverterRealtimeData;
 import com.socketserver.thrack.model.data.TabPeakPowerData;
 import com.socketserver.thrack.model.data.TabTodaySummary;
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * Created by wushenjun on 2017/4/1.
@@ -62,5 +63,14 @@ public interface InverterDataDAO {
      * @param tabTodaySummary
      */
     void insertInverterStatus(TabTodaySummary tabTodaySummary);
+
+
+    /**
+     * 获取最近一条逆变器上报的数据
+     * @param dtuId
+     * @param inverterId
+     * @return
+     */
+    TabInverterRealtimeData getInverterLastInsertRealTimeData(@Param("dtuId") String dtuId, @Param("inverterId") String inverterId);
 
 }

@@ -111,4 +111,55 @@
                                               #{datestring}, SYSDATE, SYSDATE)
     </insert>
 
+
+    <!--逆变器实时数据表字段-->
+    <sql id="inverterRealtimedataColumns">
+        t1."id",
+        t1."dtu_id" as dtuId,
+        t1."inverter_addr" as inverterAddr,
+        t1."pv1_voltage" as pv1Voltage,
+        t1."pv2_voltage" as pv2Voltage,
+        t1."pv3_voltage" as pv3Voltage,
+        t1."pv4_voltage" as pv4Voltage,
+        t1."pv1_electric_current" as pv1ElectricCurrent,
+        t1."pv2_electric_current" as pv2ElectricCurrent,
+        t1."pv3_electric_current" as pv3ElectricCurrent,
+        t1."pv4_electric_current" as pv4ElectricCurrent,
+        t1."u_phase_voltage" as uPhaseVoltage,
+        t1."v_phase_voltage" as vPhaseVoltage,
+        t1."w_phase_voltage" as wPhaseVoltage,
+        t1."bus_phase_voltage" as busPhaseVoltage,
+        t1."u_phase_electric_current" uPhaseElectricCurrent,
+        t1."v_phase_electric_current" as vPhaseElectricCurrent,
+        t1."w_phase_electric_current" as wPhaseElectricCurrent,
+        t1."bus_phase_electric_current" as busPhaseElectricCurrent,
+        t1."grid_frequency" as gridFrequency,
+        t1."power_factor" as powerFactor,
+        t1."input_power" as inputPower,
+        t1."output_power" as outputPower,
+        t1."temperature1",
+        t1."temperature2",
+        t1."temperature3",
+        t1."grounding_resistance" as groundingResistance,
+        t1."leakage_current" as leakageCurrent,
+        t1."dc_component" as dcComponent,
+        t1."ctime",
+        t1."inverter_id" as inverterId,
+        t1."highdata_insert" as highdataInsert,
+        t1."lowdata_insert" as lowdataInsert
+    </sql>
+
+
+    <!--获取最近一条逆变器上报的数据-->
+    <select id="getInverterLastInsertRealTimeData" resultType="com.socketserver.thrack.model.data.TabInverterRealtimeData">
+        SELECT * FROM
+        (SELECT
+          <include refid="inverterRealtimedataColumns"/>
+        FROM "ts_inverter_realtimedata" t1
+        WHERE t1."dtu_id" = #{dtuId}
+          and t1."inverter_id" = #{inverterId}
+        ORDER BY t1."id" DESC) t2
+        AND ROWNUM <![CDATA[ < ]]> 2
+    </select>
+
 </mapper>

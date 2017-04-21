@@ -146,6 +146,9 @@ public class InvtInverterDataHandler extends ChannelInboundHandlerAdapter {
                 case Constants.ADDR_1690:
                     dataDealService.dataDealOfAddr1690(message, clientInverterStats);
                     break;
+                case Constants.ADDR_16A0:
+                    dataDealService.dataDealOfAddr16A0(message, clientInverterStats);
+                    break;
                 case Constants.ADDR_1800:
                     dataDealService.dataDealOfAddr1800(message, clientInverterStats);
                     break;

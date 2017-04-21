@@ -32,7 +32,7 @@ public class DataDealService implements IDataDealService {
     private InverterDataDAO inverterDataDAO;
 
 
-    @Transactional
+    
     @Override
     public void dataDealOfAddr1600(byte[] message, ClientInverterStats clientInverterStats) {
         byte[] dataBytes = this.getDataBytes(message);
@@ -64,7 +64,7 @@ public class DataDealService implements IDataDealService {
         );
     }
 
-    @Transactional
+    
     @Override
     public void dataDealOfAddr1616(byte[] message, ClientInverterStats clientInverterStats) {
         byte[] dataBytes = this.getDataBytes(message);
@@ -105,7 +105,7 @@ public class DataDealService implements IDataDealService {
 
     }
 
-    @Transactional
+    
     @Override
     public void dataDealOfAddr1652(byte[] message, ClientInverterStats clientInverterStats) {
         byte[] dataBytes = this.getDataBytes(message);
@@ -146,7 +146,7 @@ public class DataDealService implements IDataDealService {
 
     }
 
-    @Transactional
+    
     @Override
     public void dataDealOfAddr1670(byte[] message, ClientInverterStats clientInverterStats) {
         byte[] dataBytes = this.getDataBytes(message);
@@ -215,7 +215,7 @@ public class DataDealService implements IDataDealService {
 
     }
 
-    @Transactional
+    
     @Override
     public void dataDealOfAddr168E(byte[] message, ClientInverterStats clientInverterStats) {
         byte[] dataBytes = this.getDataBytes(message);
@@ -243,11 +243,24 @@ public class DataDealService implements IDataDealService {
         );
     }
 
-    @Transactional
+    
     @Override
     public void dataDealOfAddr1690(byte[] message, ClientInverterStats clientInverterStats) {
+
+        //获取最近一条逆变器上报的数据
+        TabInverterRealtimeData tabInverterRealtimeData = inverterDataDAO.getInverterLastInsertRealTimeData(clientInverterStats.getDtuId(), clientInverterStats.getInverterId());
+
+        TabInverterRealtimeData tabInverterOperParams;
+        //已经是一条完整的数据
+        if(tabInverterRealtimeData.getHighdataInsert()==1&&tabInverterRealtimeData.getLowdataInsert()==1) {
+            tabInverterOperParams = new TabInverterRealtimeData();
+        } else {
+            tabInverterOperParams = tabInverterRealtimeData;
+        }
+
+        //TabInverterRealtimeData tabInverterOperParams = new TabInverterRealtimeData();
+
         byte[] dataBytes = this.getDataBytes(message);
-        TabInverterRealtimeData tabInverterOperParams = new TabInverterRealtimeData();
         //PV1电压
         byte[] pv1VoltageBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 0, 2);
         BigDecimal pv1Voltage = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(pv1VoltageBytes, 10);
@@ -321,7 +334,7 @@ public class DataDealService implements IDataDealService {
         tabInverterOperParams.setwPhaseElectricCurrent(wPhaseElectricCurrent);
         tabInverterOperParams.setBusPhaseElectricCurrent(busElectricCurrent);
 
-        //电网频率
+        /*//电网频率
         byte[] gridFrequencyBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 32, 2);
         BigDecimal gridFrequency = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(gridFrequencyBytes, 100);
         //功率因数(有符号)
@@ -367,11 +380,12 @@ public class DataDealService implements IDataDealService {
         logger.info("接地电阻(M)、漏电流(mA)、直流分量(mA)分别为:{},{},{}",groundingResistance, leakageCurrent, dcComponent);
         tabInverterOperParams.setGroundingResistance(groundingResistance);
         tabInverterOperParams.setLeakageCurrent(leakageCurrent);
-        tabInverterOperParams.setDcComponent(dcComponent);
+        tabInverterOperParams.setDcComponent(dcComponent);*/
 
         tabInverterOperParams.setDtuId(clientInverterStats.getDtuId());
         tabInverterOperParams.setInverterId(clientInverterStats.getInverterId());
         tabInverterOperParams.setInverterAddr(clientInverterStats.getInverterAddr());
+        tabInverterOperParams.setHighdataInsert(1);//设置高位数据已经存储
 
 
         //使用线程处理-运行参数信息(已解析)
@@ -384,10 +398,86 @@ public class DataDealService implements IDataDealService {
                 }, 1, TimeUnit.MICROSECONDS
         );
 
+    }
+
+
+    @Override
+    public void dataDealOfAddr16A0(byte[] message, ClientInverterStats clientInverterStats) {
+        //获取最近一条逆变器上报的数据
+        TabInverterRealtimeData tabInverterRealtimeData = inverterDataDAO.getInverterLastInsertRealTimeData(clientInverterStats.getDtuId(), clientInverterStats.getInverterId());
+
+        TabInverterRealtimeData tabInverterOperParams;
+        //已经是一条完整的数据
+        if(tabInverterRealtimeData!=null&&tabInverterRealtimeData.getHighdataInsert()==1&&tabInverterRealtimeData.getLowdataInsert()==1) {
+            tabInverterOperParams = new TabInverterRealtimeData();
+        } else {
+            tabInverterOperParams = tabInverterRealtimeData;
+        }
+
+        byte[] dataBytes = this.getDataBytes(message);
+
+        //电网频率
+        byte[] gridFrequencyBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 0, 2);
+        BigDecimal gridFrequency = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(gridFrequencyBytes, 100);
+        //功率因数(有符号)
+        byte[] powerFactorBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 2, 2);
+        BigDecimal powerFactor = DataTransformUtils.tranfrom2ByteAndMulToSignedRealValue(powerFactorBytes, 1000);
+        //输入功率(KW)
+        byte[] inputPowerBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 4, 4);
+        BigDecimal inputPower = DataTransformUtils.tranfrom4ByteAndMulToUnsignedRealValue(inputPowerBytes, 1000);
+        //输出功率(KW)
+        byte[] outputPowerBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 8, 4);
+        BigDecimal outputPower = DataTransformUtils.tranfrom4ByteAndMulToUnsignedRealValue(outputPowerBytes, 1000);
+
+        logger.info("电网频率、功率因数(有符号)、输入功率(KW)及输出功率(KW)分别为:{},{},{},{}",gridFrequency, powerFactor, inputPower, outputPower);
+        tabInverterOperParams.setGridFrequency(gridFrequency);
+        tabInverterOperParams.setPowerFactor(powerFactor);
+        tabInverterOperParams.setInputPower(inputPower);
+        tabInverterOperParams.setOutputPower(outputPower);
+
+        //温度1(℃)
+        byte[] temperature1Bytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 12, 2);
+        BigDecimal temperature1 = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(temperature1Bytes, 100);
+        //温度2(℃)
+        byte[] temperature2Bytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 14, 2);
+        BigDecimal temperature2 = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(temperature2Bytes, 100);
+        //温度3(℃)
+        byte[] temperature3Bytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 16, 2);
+        BigDecimal temperature3 = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(temperature3Bytes, 100);
+
+        logger.info("温度1(℃)、温度2(℃)、温度3(℃)分别为:{},{},{}",temperature1, temperature2, temperature3);
+        tabInverterOperParams.setTemperature1(temperature1);
+        tabInverterOperParams.setTemperature2(temperature2);
+        tabInverterOperParams.setTemperature3(temperature3);
+
+        //接地电阻(M)
+        byte[] groundingResistanceBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 26, 2);
+        BigDecimal groundingResistance = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(groundingResistanceBytes, 100);
+        //漏电流(mA)
+        byte[] leakageCurrentBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 28, 2);
+        BigDecimal leakageCurrent = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(leakageCurrentBytes, 100);
+        //直流分量(mA) 0~65535，对应0~65535mA
+        byte[] dcComponentBytes = DataTransformUtils.getBytesArrFromOffsetAndLength(dataBytes, 30, 2);
+        BigDecimal dcComponent = DataTransformUtils.tranfrom2ByteAndMulToUnsignedRealValue(dcComponentBytes, 1);
+        logger.info("接地电阻(M)、漏电流(mA)、直流分量(mA)分别为:{},{},{}",groundingResistance, leakageCurrent, dcComponent);
+        tabInverterOperParams.setGroundingResistance(groundingResistance);
+        tabInverterOperParams.setLeakageCurrent(leakageCurrent);
+        tabInverterOperParams.setDcComponent(dcComponent);
+        tabInverterOperParams.setLowdataInsert(1);//设置低位数据已经存储
+
+        //使用线程处理-运行参数信息(已解析)
+        ExecutorGroupFactory.getInstance().getWritingDBTaskGroup().schedule(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        inverterDataDAO.insertInverterRealtimeData(tabInverterOperParams);
+                    }
+                }, 1, TimeUnit.MICROSECONDS
+        );
 
     }
 
-    @Transactional
+
     @Override
     public void dataDealOfAddr1800(byte[] message, ClientInverterStats clientInverterStats) {
         byte[] dataBytes = this.getDataBytes(message);
