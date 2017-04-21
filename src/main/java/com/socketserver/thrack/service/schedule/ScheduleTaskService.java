@@ -125,7 +125,7 @@ public class ScheduleTaskService {
                 requestSize = StartAddrAndReadSize.getSizeByAddress(readAddress);
 
                 //请求数据
-                byte[] requestInverterAddr = new byte[] {readAddressBytes[0], readAddressBytes[1]};
+                /*byte[] requestInverterAddr = new byte[] {readAddressBytes[0], readAddressBytes[1]};
                 byte[] requestLength = new byte[] {0x00, (byte) requestSize};
                 InverterRequest request = new InverterRequest(inverterAddress[0], (byte) 0x03, ByteUtil.getShort(requestInverterAddr, 0), ByteUtil.getShort(requestLength, 0));
 
@@ -137,14 +137,14 @@ public class ScheduleTaskService {
                 }
                 ByteBuf encoded = channel.alloc().buffer();
                 encoded.writeBytes(requestBytes);
-                channel.writeAndFlush(encoded);
+                channel.writeAndFlush(encoded);*/
 
-                /*requestBytes = new byte[]{inverterAddress[0], 0x03, readAddressBytes[0], readAddressBytes[1], 0x00, (byte) requestSize, 0x00, 0x00};
+                requestBytes = new byte[]{inverterAddress[0], 0x03, readAddressBytes[0], readAddressBytes[1], 0x00, (byte) requestSize, 0x00, 0x00};
                 bcrc = CodeUtils.crc16(requestBytes, requestBytes.length-2);//length-2 因为加上了CRC高低位
                 requestBytes[requestBytes.length-2] = bcrc[0];
                 requestBytes[requestBytes.length-1] = bcrc[1];
                 logger.info("schedule task requestBytes is : {}", CodeUtils.getHexString(requestBytes));
-                channel.writeAndFlush(requestBytes);*/
+                channel.writeAndFlush(requestBytes);
 
 
 

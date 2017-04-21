@@ -46,7 +46,7 @@ public class InverterDataCollectServerInitializer extends ChannelInitializer<Soc
         pipeline.addLast(new ByteArrayDecoder());
         
         //发送时,将数据转换为byte数组
-        //pipeline.addLast(new ByteArrayEncoder());
+        pipeline.addLast(new ByteArrayEncoder());
         
         // and then business logic.
         //1、IDEL+验证数据(CRC16算法)+消息基本处理

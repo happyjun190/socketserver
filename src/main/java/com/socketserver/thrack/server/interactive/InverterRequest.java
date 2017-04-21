@@ -61,7 +61,8 @@ public class InverterRequest
 
 	public static void main(String[] args) throws IOException {
 		byte[] pdu = null;
-		InverterRequest inverterRequest = new InverterRequest((byte) 0x01, (byte) 0x03, (short) 0x121C, (short) 0x0014);
+		InverterRequest inverterRequest = new InverterRequest((byte) 0x01, (byte) 0x03, (short) 0x1600, (short) 0x001C);
+		//01 03 16 00 00 1C 40 4B
 		pdu = inverterRequest.encode();
 		String s = CodeUtils.getHexString(pdu);
 		System.out.println(s);
