@@ -112,6 +112,8 @@ public class AuthenticationHandler extends ChannelInboundHandlerAdapter {
 			return;
 		}
 
+		//TODO 打印数据
+		logger.info("接收到的数据为:{}", authKey);
 
 		//2、保存channel到双向map中
 
