@@ -1,5 +1,6 @@
 package com.socketserver.thrack.service.schedule;
 
+import com.socketserver.thrack.commons.ByteUtil;
 import com.socketserver.thrack.commons.CodeUtils;
 import com.socketserver.thrack.commons.DateUtils;
 import com.socketserver.thrack.commons.StringUtil;
@@ -8,12 +9,15 @@ import com.socketserver.thrack.server.client.ClientInverterStats;
 import com.socketserver.thrack.server.client.ClientMap;
 import com.socketserver.thrack.server.client.Constants;
 import com.socketserver.thrack.server.client.Constants.StartAddrAndReadSize;
+import com.socketserver.thrack.server.interactive.InverterRequest;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Map;
 
 
@@ -102,7 +106,7 @@ public class ScheduleTaskService {
         int nowTimeToInt = DateUtils.dateToInt();//当前时间的秒钟
         int timeinterval;
         byte[] bcrc;
-        byte[] requestBytes;//请求byte   {逆变器地址(inverterAddress),请求类型(03都请求),寄存器高低位(readAddressBytes),00,寄存器个数(requestSize),crc高低位(2bytes)}
+        byte[] requestBytes = null;//请求byte   {逆变器地址(inverterAddress),请求类型(03都请求),寄存器高低位(readAddressBytes),00,寄存器个数(requestSize),crc高低位(2bytes)}
         for(String key:inverterStatsMap.keySet()) {
             clientInverterStats = inverterStatsMap.get(key);
             timeinterval = nowTimeToInt - clientInverterStats.getLastSendTime();
@@ -119,12 +123,31 @@ public class ScheduleTaskService {
                 }
                 readAddressBytes = CodeUtils.hexStringToBytes(readAddress);
                 requestSize = StartAddrAndReadSize.getSizeByAddress(readAddress);
-                requestBytes = new byte[]{inverterAddress[0], 0x03, readAddressBytes[0], readAddressBytes[1], 0x00, (byte) requestSize, 0x00, 0x00};
+
+                //请求数据
+                byte[] requestInverterAddr = new byte[] {readAddressBytes[0], readAddressBytes[1]};
+                byte[] requestLength = new byte[] {0x00, (byte) requestSize};
+                InverterRequest request = new InverterRequest(inverterAddress[0], (byte) 0x03, ByteUtil.getShort(requestInverterAddr, 0), ByteUtil.getShort(requestLength, 0));
+
+                try {
+                    requestBytes = request.encode();
+                    logger.info("请求逆变器的数据为:{}" + CodeUtils.getHexString(requestBytes));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                ByteBuf encoded = channel.alloc().buffer();
+                encoded.writeBytes(requestBytes);
+                channel.writeAndFlush(encoded);
+
+                /*requestBytes = new byte[]{inverterAddress[0], 0x03, readAddressBytes[0], readAddressBytes[1], 0x00, (byte) requestSize, 0x00, 0x00};
                 bcrc = CodeUtils.crc16(requestBytes, requestBytes.length-2);//length-2 因为加上了CRC高低位
                 requestBytes[requestBytes.length-2] = bcrc[0];
                 requestBytes[requestBytes.length-1] = bcrc[1];
                 logger.info("schedule task requestBytes is : {}", CodeUtils.getHexString(requestBytes));
-                channel.writeAndFlush(requestBytes);
+                channel.writeAndFlush(requestBytes);*/
+
+
+
                 //TODO 需要改变逆变器状态
                 clientInverterStats.setLastSendTime(nowTimeToInt);
                 clientInverterStats.setSendStatus(1);
