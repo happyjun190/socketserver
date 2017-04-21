@@ -159,7 +159,7 @@
         WHERE t1."dtu_id" = #{dtuId}
           and t1."inverter_id" = #{inverterId}
         ORDER BY t1."id" DESC) t2
-        AND ROWNUM <![CDATA[ < ]]> 2
+        WHERE ROWNUM <![CDATA[ < ]]> 2
     </select>
 
 </mapper>
