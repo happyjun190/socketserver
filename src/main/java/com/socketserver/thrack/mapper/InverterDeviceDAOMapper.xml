@@ -5,26 +5,26 @@
 
     <!--dtu的逆变器表基本信息-->
     <sql id="inverterDeviceColumns">
-        t1."id" as inverterId,
-        t1."inverter_addr" as inverterAddr,
-        t1."dtu_id" as dtuId,
-        t1."mtime",
-        t1."status",
-        t1."ctime",
-        t1."inverter_type" as inverterType,
-        t1."version" as version,
-        t1."phase_type" as phaseType,
-        t1."power_size" as powerSize
+        T1."ID" as inverterId,
+        T1."INVERTER_ADDR" as inverterAddr,
+        T1."DTU_ID" as dtuId,
+        T1."MTIME" as mtime,
+        T1."STATUS" as status,
+        T1."CTIME" as ctime,
+        T1."INVERTER_TYPE" as inverterType,
+        T1."VERSION" as version,
+        T1."PHASE_TYPE" as phaseType,
+        T1."POWER_SIZE" as powerSize
     </sql>
 
     <!--通过dtuId 获取dtu下关联的有效设备,并返回inverterId(逆变器地址)-ClientInverterStats的map集合-->
     <select id="getInverterStatsMap" resultType="com.socketserver.thrack.server.client.ClientInverterStats">
         SELECT
           <include refid="inverterDeviceColumns"/>
-        FROM "ts_inverter_device" t1
+        FROM "TS_INVERTER_DEVICE" T1
         <where>
-            t1."status" = 0
-        and t1."dtu_id" = #{dtuId}
+            T1."STATUS" = 0
+        and T1."DTU_ID" = #{dtuId}
         </where>
     </select>
 

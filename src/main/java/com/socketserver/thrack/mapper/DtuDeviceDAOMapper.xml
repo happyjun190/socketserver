@@ -5,24 +5,24 @@
 
     <!--dtu设备表基本信息-->
     <sql id="dtuDeviceColumns">
-        t1."id",
-        t1."powerstation_id" as powerstationId,
-        t1."model",
-        t1."auth_key" as authKey,
-        t1."status",
-        t1."parity",
-        t1."series_rate" as seriesRate,
-        t1."mtime",
-        t1."ctime"
+        T1."ID" AS id,
+        T1."POWERSTATION_ID" as powerstationId,
+        T1."MODEL" AS model,
+        T1."AUTH_KEY" as authKey,
+        T1."STATUS" AS status,
+        T1."PARITY" AS parity,
+        T1."SERIES_RATE" as seriesRate,
+        T1."MTIME",
+        T1."CTIME"
     </sql>
 
     <!--通过dtuId获取dtu基本信息-->
     <select id="getDtuDeviceById" resultType="com.socketserver.thrack.model.device.TabDtuDevice">
         SELECT
           <include refid="dtuDeviceColumns"/>
-        FROM "ts_dtu_device" t1
+        FROM "TS_DTU_DEVICE" T1
         <where>
-            t1."id" = #{dtuId}
+            T1."ID" = #{dtuId}
         </where>
     </select>
 
@@ -31,10 +31,10 @@
     <select id="getDtuDeviceByAuthKey" resultType="com.socketserver.thrack.model.device.TabDtuDevice">
         SELECT
         <include refid="dtuDeviceColumns"/>
-        FROM "ts_dtu_device" t1
+        FROM "TS_DTU_DEVICE" T1
         <where>
-            t1."auth_key" = #{authKey}
-            and t1."status" = 0
+            T1."AUTH_KEY" = #{authKey}
+            and T1."STATUS" = 0
             AND ROWNUM <![CDATA[ < ]]> 2
         </where>
     </select>
