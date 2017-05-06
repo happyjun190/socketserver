@@ -67,11 +67,11 @@
     <insert id="insertReactivePowerToTodaySummary">
         MERGE INTO "TS_TODAY_SUMMARY" T1
         USING (select #{dtuId} as dtuId, #{inverterAddr} as inverterAddr, #{inverterId} as inverterId, #{reactivePower} as reactivePower, #{datestring} as datestring from DUAL ) t2
-        ON (T1."dtu_id"=t2."DTUID" AND T1."inverter_addr"=t2."INVERTERADDR" AND T1."DATESTRING"=t2."DATESTRING")
+        ON (T1."dtu_id"=t2."DTUID" AND T1."INVERTER_ADDR"=t2."INVERTERADDR" AND T1."DATESTRING"=t2."DATESTRING")
         WHEN MATCHED THEN UPDATE  SET
             T1."REACTIVE_POWER" = t2."REACTIVEPOWER",
             T1."MTIME" = SYSDATE
-        WHERE T1."dtu_id"=t2."DTUID" AND T1."inverter_addr"=t2."INVERTERADDR" AND T1."DATESTRING"=t2."DATESTRING"
+        WHERE T1."dtu_id"=t2."DTUID" AND T1."INVERTER_ADDR"=t2."INVERTERADDR" AND T1."DATESTRING"=t2."DATESTRING"
         WHEN NOT MATCHED THEN
         INSERT("ID", "DTU_ID", "INVERTER_ADDR", "INVERTER_ID", "REACTIVE_POWER", "DATESTRING", "CTIME", "MTIME")
         VALUES (SEQ_ON_TODAYSUMMARY.NEXTVAL, #{dtuId}, #{inverterAddr}, #{inverterId}, #{reactivePower}, #{datestring}, SYSDATE, SYSDATE)
@@ -86,7 +86,7 @@
                        #{exception5} as exception5, #{exception6} as exception6, #{exception7} as exception7, #{exception8} as exception8,
                        "TO_DATE"(TO_CHAR(#{inverterTime} / (1000 * 60 * 60 * 24) + TO_DATE('1970-01-01 08:00:00', 'YYYY-MM-DD HH:MI:SS'), 'YYYY-MM-DD HH:MI:SS'), 'YYYY-MM-DD HH:MI:SS') as inverterTime, #{inverterStatus} as inverterStatus
                 from dual ) t2
-        ON (T1."DTU_ID"=t2."DTUID" AND T1."inverter_addr"=t2."INVERTERADDR" AND T1."DATESTRING"=t2."DATESTRING")
+        ON (T1."DTU_ID"=t2."DTUID" AND T1."INVERTER_ADDR"=t2."INVERTERADDR" AND T1."DATESTRING"=t2."DATESTRING")
         WHEN MATCHED THEN UPDATE  SET
             T1."EXCEPTION1" = t2."EXCEPTION1",
             T1."EXCEPTION2" = t2."EXCEPTION2",
