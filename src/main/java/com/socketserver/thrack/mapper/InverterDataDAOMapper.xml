@@ -67,11 +67,11 @@
     <insert id="insertReactivePowerToTodaySummary">
         MERGE INTO "TS_TODAY_SUMMARY" T1
         USING (select #{dtuId} as dtuId, #{inverterAddr} as inverterAddr, #{inverterId} as inverterId, #{reactivePower} as reactivePower, #{datestring} as datestring from DUAL ) t2
-        ON (T1."dtu_id"=t2."DTUID" AND T1."INVERTER_ADDR"=t2."INVERTERADDR" AND T1."DATESTRING"=t2."DATESTRING")
+        ON (T1."DTU_ID"=t2."DTUID" AND T1."INVERTER_ADDR"=t2."INVERTERADDR" AND T1."DATESTRING"=t2."DATESTRING")
         WHEN MATCHED THEN UPDATE  SET
             T1."REACTIVE_POWER" = t2."REACTIVEPOWER",
             T1."MTIME" = SYSDATE
-        WHERE T1."dtu_id"=t2."DTUID" AND T1."INVERTER_ADDR"=t2."INVERTERADDR" AND T1."DATESTRING"=t2."DATESTRING"
+        WHERE T1."DTU_ID"=t2."DTUID" AND T1."INVERTER_ADDR"=t2."INVERTERADDR" AND T1."DATESTRING"=t2."DATESTRING"
         WHEN NOT MATCHED THEN
         INSERT("ID", "DTU_ID", "INVERTER_ADDR", "INVERTER_ID", "REACTIVE_POWER", "DATESTRING", "CTIME", "MTIME")
         VALUES (SEQ_ON_TODAYSUMMARY.NEXTVAL, #{dtuId}, #{inverterAddr}, #{inverterId}, #{reactivePower}, #{datestring}, SYSDATE, SYSDATE)
