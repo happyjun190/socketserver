@@ -17,8 +17,8 @@ public interface InverterDataDAO {
      * 采集数据时入库--原始数据
      * @param tabInverterData
      */
-    @Insert("INSERT INTO \"ts_inverter_data\" (\"id\", \"dtu_id\", \"inverter_addr\", \"inverter_id\", \"data_length\", \"data\", \"ctime\", \"start_read_address\") " +
-            "                          VALUES (seq_on_inverterdata.nextval, #{dtuId}, #{inverterAddr}, #{inverterId}, #{dataLength}, #{data}, SYSDATE, #{startReadAddress}) ")
+    @Insert("INSERT INTO \"TS_INVERTER_DATA\" (\"ID\", \"DTU_ID\", \"INVERTER_ADDR\", \"INVERTER_ID\", \"DATA_LENGTH\", \"DATA\", \"CTIME\", \"START_READ_ADDRESS\") " +
+            "                          VALUES (SEQ_ON_INVERTERDATA.NEXTVAL, #{dtuId}, #{inverterAddr}, #{inverterId}, #{dataLength}, #{data}, SYSDATE, #{startReadAddress}) ")
     void insertInverterData(TabInverterData tabInverterData);
 
 
@@ -26,8 +26,8 @@ public interface InverterDataDAO {
      * 峰值功率入库(今日峰值功率和历史峰值功率)
      * @param tabPeakPowerData
      */
-    @Insert("INSERT INTO \"ts_peak_power_data\" (\"id\", \"today_peak_power\", \"history_peak_power\", \"dtu_id\", \"inverter_addr\", \"inverter_id\", \"ctime\") " +
-            "                            VALUES (seq_on_peakpowerdata.nextval, #{todayPeakPower}, #{historyPeakPower}, #{dtuId}, #{inverterAddr}, #{inverterId}, SYSDATE)")
+    @Insert("INSERT INTO \"TS_PEAK_POWER_DATA\" (\"ID\", \"TODAY_PEAK_POWER\", \"HISTORY_PEAK_POWER\", \"DTU_ID\", \"INVERTER_ADDR\", \"INVERTER_ID\", \"CTIME\") " +
+            "                            VALUES (SEQ_ON_PEAKPOWERDATA.NEXTVAL, #{todayPeakPower}, #{historyPeakPower}, #{dtuId}, #{inverterAddr}, #{inverterId}, SYSDATE)")
     void insertPowerData(TabPeakPowerData tabPeakPowerData);
 
 
