@@ -1,6 +1,5 @@
 package com.socketserver.thrack.service.schedule;
 
-import com.socketserver.thrack.commons.ByteUtil;
 import com.socketserver.thrack.commons.CodeUtils;
 import com.socketserver.thrack.commons.DateUtils;
 import com.socketserver.thrack.commons.StringUtil;
@@ -9,7 +8,6 @@ import com.socketserver.thrack.server.client.ClientInverterStats;
 import com.socketserver.thrack.server.client.ClientMap;
 import com.socketserver.thrack.server.client.Constants;
 import com.socketserver.thrack.server.client.Constants.StartAddrAndReadSize;
-import com.socketserver.thrack.server.interactive.InverterRequest;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
@@ -17,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.Map;
 
 
@@ -50,6 +47,7 @@ public class ScheduleTaskService {
                 //验证通过或者是活跃状态
                 /*if(client.getStatus()==Client.Status.AUTH||client.getStatus()==Client.Status.ACTIVE) {*/
                 if(client.getStatus()==Client.Status.ACTIVE) {
+                    //logger.info("这个dtu设备channel处于活跃状态，发送消息，client：{}", client);
                     sendRequsetToSleptInvtInverter(channel, inverterStatsMap);
                 } else {
                     logger.info("这个dtu设备channel未鉴权通过或处于不活跃状态，client：{}", client);

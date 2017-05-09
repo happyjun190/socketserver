@@ -35,7 +35,7 @@ public class HeartBeatHandler extends ChannelInboundHandlerAdapter {
             logger.info("client HeartBeat, HeartBeat_MSG:{}", heartBeatMsg);
             Client client = ClientMap.getClient(ctx.channel());
             if (client != null) {
-                logger.info("change client status to active!");
+                //logger.info("change client status to active!");
                 if (client.isTimeout()) {
                     logger.info("client timeout, disconnect it");
                     Commons.removeCloseChannel(ctx.channel());
